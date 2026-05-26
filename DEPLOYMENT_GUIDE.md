@@ -1,7 +1,10 @@
 # 🚀 GUÍA DE DESPLIEGUE A PRODUCCIÓN - VIVENZA HOGAR
 
 **Estado:** Listo para despliegue empresarial tras seguir estos pasos
-**Actualizado:** 3 de Abril 2026
+**Actualizado:** 26 de Mayo 2026
+**Base de Datos:** 100% MySQL 8.4+ (sin PostgreSQL)
+
+⚠️ **IMPORTANTE:** Este proyecto es **100% MySQL**. No utiliza PostgreSQL. Todos los datos fueron migrados de PostgreSQL a MySQL y la plataforma se ejecuta exclusivamente en MySQL.
 
 ---
 
@@ -23,7 +26,7 @@
 - **Node.js:** 18+ o 20+ (LTS recomendado)
 - **npm:** 9+ o **pnpm** como alternativa
 - **Composer:** 2.6+
-- **MySQL/PostgreSQL:** 8+
+- **MySQL:** 8.4+ (base de datos obligatoria)
 - **Git:** último flujo
 
 ### Comandos para Verificar:

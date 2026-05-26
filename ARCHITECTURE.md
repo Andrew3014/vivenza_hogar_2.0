@@ -5,7 +5,7 @@
 **Framework Frontend:** React 18 + Inertia.js
 **Build Tool:** Vite
 **Styling:** Tailwind CSS v4
-**Database:** MySQL/PostgreSQL
+**Database:** MySQL 8.4+ (100% MySQL)
 **Autenticación:** Laravel Sanctum
 **API:** Laravel Eloquent ORM
 
@@ -34,7 +34,7 @@
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
-│         DATABASE (MySQL/PostgreSQL)                          │
+│         DATABASE (MySQL 8.4+)                                │
 │  Users, Properties, Locations, Subscriptions, etc.           │
 └─────────────────────────────────────────────────────────────┘
 ```

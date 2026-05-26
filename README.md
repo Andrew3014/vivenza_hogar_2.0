@@ -17,10 +17,14 @@ Esta carpeta contiene documentación técnica completa:
 |---------|-------------|-----------|
 | **[QUICK_START.md](QUICK_START.md)** | 🚀 Guía de 5 minutos para empezar | Desarrolladores |
 | **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** | 📦 Despliegue a producción paso a paso | DevOps/Sysadmins |
+| **[DATABASE_GUIDE.md](DATABASE_GUIDE.md)** | 🗄️ Configuración MySQL 100% | DBAs/Backend |
+| **[ROADMAP.md](ROADMAP.md)** | 🚀 Próximas mejoras y timeline | Tech Leads/PMs |
 | **[ARCHITECTURE.md](ARCHITECTURE.md)** | 🏗️ Documentación técnica y diseño | Tech Leads/Arquitectos |
 | **[ANALYSIS_COMPATIBILITY.md](ANALYSIS_COMPATIBILITY.md)** | ⚠️ Análisis de compatibilidad v.11.0 | Tech Leads |
 
 **👉 COMIENZA AQUÍ: [QUICK_START.md](QUICK_START.md)**
+
+⚠️ **IMPORTANTE:** Este proyecto usa **100% MySQL 8.4+** (sin PostgreSQL). Ver [DATABASE_GUIDE.md](DATABASE_GUIDE.md)
 
 ---
 
@@ -54,7 +58,7 @@ Esta carpeta contiene documentación técnica completa:
 - PHP 8.3+
 - Node.js 18+ LTS
 - npm 9+
-- MySQL 8+ o PostgreSQL
+- MySQL 8.4+ (base de datos obligatoria)
 
 ### Instalación (30 segundos)
 
@@ -90,7 +94,7 @@ Accede a `http://localhost:8000`
 **Frontend:** React 18 + Inertia.js
 **Build:** Vite 8
 **Styling:** Tailwind CSS v4
-**Database:** MySQL/PostgreSQL
+**Database:** MySQL 8.4+ (100% MySQL, sin PostgreSQL)
 **ORM:** Eloquent
 
 ---

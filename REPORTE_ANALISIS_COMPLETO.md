@@ -887,7 +887,7 @@ Puede editar y resubmitir si es rechazada
 - Heroicons (iconографía)
 
 **Base de Datos:**
-- Tipo: Relacional (MySQL/PostgreSQL compatible)
+- Tipo: Relacional (MySQL 8.4+)
 - Migraciones: Laravel migrations
 - Seeders: Data fixtures
 

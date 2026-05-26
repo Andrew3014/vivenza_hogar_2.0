@@ -4,6 +4,19 @@
 
 ---
 
+## ⚠️ IMPORTANTE - BASE DE DATOS
+
+**Este proyecto es 100% MySQL 8.4+**
+
+- ✅ Base de datos: MySQL (obligatoria)
+- ❌ PostgreSQL: NO se utiliza
+- ✅ Todos los datos ya han sido migrados a MySQL
+- ✅ Migraciones Laravel diseñadas solo para MySQL
+
+**Asegúrate que tu servidor MySQL esté corriendo antes de continuar.**
+
+---
+
 ## ⚡ INSTALACIÓN RÁPIDA (5 minutos)
 
 ### Windows (PowerShell - Como Admin)
