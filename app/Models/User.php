@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'phone', 'password', 'role'])]
+#[Fillable(['name', 'email', 'phone', 'password', 'role', 'whatsapp_number', 'whatsapp_visible'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -33,6 +33,8 @@ class User extends Authenticatable
         'phone',
         'password',
         'role',
+        'whatsapp_number',
+        'whatsapp_visible',
     ];
 
     /**
@@ -85,4 +87,28 @@ class User extends Authenticatable
     {
         return $this->verification?->status === 'rechazado';
     }
+
+    /**
+     * Get the WhatsApp contact URL for direct messaging
+     * Only returns URL if user is verified and whatsapp is visible
+     */
+    public function getWhatsAppUrl(): ?string
+    {
+        if (!$this->isVerified() || !$this->whatsapp_visible || !$this->whatsapp_number) {
+            return null;
+        }
+
+        // Format: https://wa.me/NUMBER (without spaces, only digits and country code)
+        $cleanNumber = preg_replace('/[^0-9+]/', '', $this->whatsapp_number);
+        return 'https://wa.me/' . $cleanNumber;
+    }
+
+    /**
+     * Check if user has a visible WhatsApp number
+     */
+    public function hasVisibleWhatsApp(): bool
+    {
+        return $this->isVerified() && $this->whatsapp_visible && !empty($this->whatsapp_number);
+    }
 }
+

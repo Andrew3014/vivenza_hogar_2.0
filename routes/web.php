@@ -5,6 +5,7 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\WhatsAppController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -64,6 +65,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Verification Routes
     Route::get('/verification', [VerificationController::class, 'show'])->name('verification.show');
     Route::post('/verification/submit', [VerificationController::class, 'submit'])->name('verification.submit');
+
+    // WhatsApp Routes
+    Route::post('/whatsapp/update', [WhatsAppController::class, 'updateWhatsAppNumber'])->name('user.update-whatsapp');
+    Route::get('/whatsapp/agent/{userId}', [WhatsAppController::class, 'generateWhatsAppLink'])->name('whatsapp.generate-link');
+    Route::get('/whatsapp/property/{propertyId}', [WhatsAppController::class, 'getAgentContact'])->name('whatsapp.agent-contact');
 });
 
 // AGENT ROUTES

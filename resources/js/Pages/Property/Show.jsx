@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import PropertyMapDetail from '@/Components/Map/PropertyMapDetail';
+import ContactAgentViaWhatsApp from '@/Components/WhatsApp/ContactAgentViaWhatsApp';
 import { formatCurrency, buildWhatsAppPropertyMessage } from '@/utils';
 
 /**
@@ -256,6 +257,18 @@ export default function PropertyShow({ property, relatedProperties = [] }) {
 
                         {/* Sidebar */}
                         <div className="lg:col-span-1">
+                            {/* WhatsApp Contact - New Verified System */}
+                            {!isOwner && auth?.user && (
+                                <div className="mb-8">
+                                    <ContactAgentViaWhatsApp
+                                        agent={property.user}
+                                        currentUser={auth.user}
+                                        propertyTitle={property.title}
+                                        showFullCard={true}
+                                    />
+                                </div>
+                            )}
+
                             {/* Agent Card */}
                             {!isOwner && (
                                 <div className="bg-white rounded-lg shadow-lg p-8 mb-8 sticky top-4">
@@ -284,14 +297,16 @@ export default function PropertyShow({ property, relatedProperties = [] }) {
                                         </div>
                                     )}
 
-                                    {/* WhatsApp Button */}
-                                    <button
-                                        onClick={handleWhatsAppContact}
-                                        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-lg transition-colors shadow-lg mb-4 flex items-center justify-center gap-2 text-lg"
-                                    >
-                                        <span>💬</span>
-                                        Contactar por WhatsApp
-                                    </button>
+                                    {/* Legacy WhatsApp Button - for non-authenticated users */}
+                                    {!auth?.user && (
+                                        <button
+                                            onClick={handleWhatsAppContact}
+                                            className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-lg transition-colors shadow-lg mb-4 flex items-center justify-center gap-2 text-lg"
+                                        >
+                                            <span>💬</span>
+                                            Contactar por WhatsApp
+                                        </button>
+                                    )}
 
                                     {/* Email Button */}
                                     <a
