@@ -34,39 +34,64 @@ class PropertyController extends Controller
             $join->on('properties.user_id', '=', 'subscription_priority.user_id');
         })
         ->select('properties.*')
-        ->where('status', 'aprobado')
+        ->where('properties.status', 'aprobado')
         ->orderByRaw('COALESCE(subscription_priority.plan_priority, 0) DESC')
-        ->orderBy('is_featured', 'desc')
-        ->orderBy('created_at', 'desc');
+        ->orderBy('properties.is_featured', 'desc')
+        ->orderBy('properties.created_at', 'desc');
 
         if ($transactionType) {
-            $query->where('transaction_type', $transactionType);
+            $query->where('properties.transaction_type', $transactionType);
         }
 
         if ($request->filled('location_id')) {
-            $query->where('location_id', $request->location_id);
+            $query->where('properties.location_id', $request->location_id);
         }
 
         if ($request->filled('min_price')) {
-            $query->where('price', '>=', $request->min_price);
+            $query->where('properties.price', '>=', $request->min_price);
         }
 
         if ($request->filled('max_price')) {
-            $query->where('price', '<=', $request->max_price);
+            $query->where('properties.price', '<=', $request->max_price);
         }
 
         if ($request->boolean('featured')) {
-            $query->where('is_featured', true);
+            $query->where('properties.is_featured', true);
+        }
+
+        if ($request->filled('bedrooms')) {
+            $query->where('properties.bedrooms', '>=', (int) $request->input('bedrooms'));
+        }
+
+        if ($request->filled('min_area')) {
+            $query->where('properties.area', '>=', $request->input('min_area'));
+        }
+
+        if ($request->filled('max_area')) {
+            $query->where('properties.area', '<=', $request->input('max_area'));
+        }
+
+        if ($request->filled('search')) {
+            $search = '%' . trim($request->input('search')) . '%';
+            $query->where(function ($builder) use ($search) {
+                $builder->where('properties.title', 'like', $search)
+                    ->orWhere('properties.description', 'like', $search)
+                    ->orWhereHas('location', function ($locationQuery) use ($search) {
+                        $locationQuery->where('name', 'like', $search)
+                            ->orWhere('city', 'like', $search)
+                            ->orWhere('state', 'like', $search);
+                    });
+            });
         }
 
         $properties = $query->paginate(12)->withQueryString();
-        $locations = Location::select('id', 'name', 'city')->get();
+        $locations = Location::select('id', 'name', 'city', 'state', 'latitude', 'longitude')->get();
 
         return Inertia::render('Home', [
             'properties' => $properties,
             'locations' => $locations,
             'filters' => array_merge(
-                $request->only(['type', 'transaction_type', 'location_id', 'min_price', 'max_price', 'featured']),
+                $request->only(['type', 'transaction_type', 'location_id', 'min_price', 'max_price', 'featured', 'bedrooms', 'min_area', 'max_area', 'search']),
                 ['transaction_type' => $transactionType]
             ),
         ]);
@@ -83,7 +108,7 @@ class PropertyController extends Controller
             ]);
         }
 
-        $locations = Location::select('id', 'name', 'city')->get();
+        $locations = Location::select('id', 'name', 'city', 'state', 'latitude', 'longitude')->get();
         $subscriptionData = array_merge($subscription->toArray(), [
             'properties_left' => max(0, $subscription->max_properties - $user->properties()->count()),
         ]);
@@ -128,6 +153,8 @@ class PropertyController extends Controller
             'bedrooms' => 'nullable|integer|min:0',
             'bathrooms' => 'nullable|integer|min:0',
             'area' => 'nullable|numeric|min:0',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'is_featured' => 'boolean',
         ]);
 
@@ -193,7 +220,7 @@ class PropertyController extends Controller
     {
         $this->authorize('update', $property);
 
-        $locations = Location::select('id', 'name', 'city')->get();
+        $locations = Location::select('id', 'name', 'city', 'state', 'latitude', 'longitude')->get();
 
         return Inertia::render('Property/Edit', [
             'property' => $property,
@@ -221,6 +248,8 @@ class PropertyController extends Controller
             'bedrooms' => 'nullable|integer|min:0',
             'bathrooms' => 'nullable|integer|min:0',
             'area' => 'nullable|numeric|min:0',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'is_featured' => 'boolean',
         ]);
 

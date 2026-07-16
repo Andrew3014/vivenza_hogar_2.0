@@ -101,5 +101,9 @@ class DatabaseSeeder extends Seeder
 
         // Ejecutar seeder de propiedades
         $this->call(PropertySeeder::class);
+
+        // Escenario pequeño y repetible para pruebas de los tres roles,
+        // operaciones Bolivia y mapa interactivo.
+        $this->call(DemoScenarioSeeder::class);
     }
 }

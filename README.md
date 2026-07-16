@@ -21,6 +21,7 @@ Esta carpeta contiene documentación técnica completa:
 | **[ROADMAP.md](ROADMAP.md)** | 🚀 Próximas mejoras y timeline | Tech Leads/PMs |
 | **[REVISION_ARQUITECTURA_2026-07-16.md](REVISION_ARQUITECTURA_2026-07-16.md)** | Revisión de roles, riesgos y estabilidad | Equipo técnico |
 | **[DICCIONARIO_INTEGRACION_FRONTEND.md](DICCIONARIO_INTEGRACION_FRONTEND.md)** | Rutas, campos, estados y reglas para React | Frontend/Backend |
+| **[GUIA_PRUEBAS_Y_MAPA.md](GUIA_PRUEBAS_Y_MAPA.md)** | Cuentas demo, datos del vendedor, filtros y mapa | QA/Frontend |
 | **[ARCHITECTURE.md](ARCHITECTURE.md)** | 🏗️ Documentación técnica y diseño | Tech Leads/Arquitectos |
 | **[ANALYSIS_COMPATIBILITY.md](ANALYSIS_COMPATIBILITY.md)** | ⚠️ Análisis de compatibilidad v.11.0 | Tech Leads |
 

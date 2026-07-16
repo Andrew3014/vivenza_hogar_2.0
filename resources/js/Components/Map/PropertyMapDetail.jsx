@@ -6,7 +6,9 @@ export default function PropertyMapDetail({ property }) {
   const mapInstanceRef = useRef(null);
 
   useEffect(() => {
-    if (!mapRef.current || !property || !property.location || !property.location.latitude || !property.location.longitude) return;
+    const propertyLatitude = property?.latitude ?? property?.location?.latitude;
+    const propertyLongitude = property?.longitude ?? property?.location?.longitude;
+    if (!mapRef.current || !property || propertyLatitude === null || propertyLatitude === undefined || propertyLongitude === null || propertyLongitude === undefined) return;
 
     const initializeMap = async () => {
       try {
@@ -20,8 +22,8 @@ export default function PropertyMapDetail({ property }) {
           shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
         });
 
-        const latitude = parseFloat(property.location.latitude);
-        const longitude = parseFloat(property.location.longitude);
+        const latitude = parseFloat(propertyLatitude);
+        const longitude = parseFloat(propertyLongitude);
 
         // Create map
         if (mapInstanceRef.current) {
@@ -73,7 +75,9 @@ export default function PropertyMapDetail({ property }) {
     };
   }, [property]);
 
-  if (!property || !property.location || !property.location.latitude || !property.location.longitude) {
+  const latitudeValue = property?.latitude ?? property?.location?.latitude;
+  const longitudeValue = property?.longitude ?? property?.location?.longitude;
+  if (!property || latitudeValue === null || latitudeValue === undefined || longitudeValue === null || longitudeValue === undefined) {
     return (
       <div className="flex items-center justify-center h-96 bg-gray-100 rounded-lg">
         <p className="text-gray-500">Location data not available</p>
@@ -81,8 +85,10 @@ export default function PropertyMapDetail({ property }) {
     );
   }
 
-  const latitude = parseFloat(property.location.latitude);
-  const longitude = parseFloat(property.location.longitude);
+  const latitude = parseFloat(latitudeValue);
+  const longitude = parseFloat(longitudeValue);
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+  const copyCoordinates = () => navigator.clipboard?.writeText(`${latitude}, ${longitude}`);
 
   return (
     <div className="w-full rounded-lg overflow-hidden shadow-lg">
@@ -95,13 +101,21 @@ export default function PropertyMapDetail({ property }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <h4 className="font-semibold text-gray-800 mb-2">Ubicación</h4>
-            <p className="text-gray-600 text-sm mb-3">{property.location.address || property.location.name}</p>
+            <p className="text-gray-600 text-sm mb-3">{property.location?.address || property.location?.name || property.location?.city}</p>
             <p className="text-gray-600 text-sm">
               <span className="font-semibold">Latitud:</span> {latitude.toFixed(6)}
             </p>
             <p className="text-gray-600 text-sm">
               <span className="font-semibold">Longitud:</span> {longitude.toFixed(6)}
             </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <a href={googleMapsUrl} target="_blank" rel="noreferrer" className="rounded bg-blue-600 px-3 py-2 text-xs font-semibold text-white">
+                Abrir en Google Maps
+              </a>
+              <button type="button" onClick={copyCoordinates} className="rounded bg-gray-200 px-3 py-2 text-xs font-semibold text-gray-800">
+                Copiar coordenadas
+              </button>
+            </div>
           </div>
 
           <div>
@@ -109,12 +123,12 @@ export default function PropertyMapDetail({ property }) {
             <p className="text-gray-600 text-sm mb-2">
               <span className="font-semibold">Propiedad:</span> {property.title}
             </p>
-            {property.location.city && (
+            {property.location?.city && (
               <p className="text-gray-600 text-sm mb-2">
                 <span className="font-semibold">Ciudad:</span> {property.location.city}
               </p>
             )}
-            {property.location.name && (
+            {property.location?.name && (
               <p className="text-gray-600 text-sm">
                 <span className="font-semibold">Barrio:</span> {property.location.name}
               </p>

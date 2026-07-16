@@ -22,15 +22,21 @@ export default function PropertyMap({ properties = [] }) {
           shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
         });
 
-        const validProperties = properties.filter(
-          p => p.location && p.location.latitude && p.location.longitude
-        );
+        const coordinatesFor = (property) => ({
+          latitude: property.latitude ?? property.location?.latitude,
+          longitude: property.longitude ?? property.location?.longitude,
+        });
+        const validProperties = properties.filter(p => {
+          const coordinates = coordinatesFor(p);
+          return coordinates.latitude !== null && coordinates.latitude !== undefined
+            && coordinates.longitude !== null && coordinates.longitude !== undefined;
+        });
 
         if (validProperties.length === 0) return;
 
         // Calculate center
-        const centerLat = validProperties.reduce((sum, p) => sum + parseFloat(p.location.latitude), 0) / validProperties.length;
-        const centerLng = validProperties.reduce((sum, p) => sum + parseFloat(p.location.longitude), 0) / validProperties.length;
+        const centerLat = validProperties.reduce((sum, p) => sum + parseFloat(coordinatesFor(p).latitude), 0) / validProperties.length;
+        const centerLng = validProperties.reduce((sum, p) => sum + parseFloat(coordinatesFor(p).longitude), 0) / validProperties.length;
 
         // Create map
         if (mapInstanceRef.current) {
@@ -47,15 +53,16 @@ export default function PropertyMap({ properties = [] }) {
 
         // Add markers
         validProperties.forEach(property => {
-          const lat = parseFloat(property.location.latitude);
-          const lng = parseFloat(property.location.longitude);
+          const { latitude, longitude } = coordinatesFor(property);
+          const lat = parseFloat(latitude);
+          const lng = parseFloat(longitude);
           const marker = L.marker([lat, lng]).addTo(mapInstanceRef.current);
           
           const popupContent = `
             <div class="p-2 min-w-max">
               <h3 class="font-bold text-gray-800 cursor-pointer hover:text-blue-600">${property.title}</h3>
-              <p class="text-sm text-gray-600">${property.location.address || property.location.name}</p>
-              <p class="text-sm font-semibold text-blue-600 mt-2">$${property.price.toLocaleString()}</p>
+              <p class="text-sm text-gray-600">${property.location?.address || property.location?.name || property.location?.city || ''}</p>
+              <p class="text-sm font-semibold text-blue-600 mt-2">${Number(property.price).toLocaleString()}</p>
               <p class="text-xs text-gray-500 mt-1">Click para más detalles</p>
             </div>
           `;
@@ -81,9 +88,11 @@ export default function PropertyMap({ properties = [] }) {
     };
   }, [properties]);
 
-  const validProperties = properties.filter(
-    p => p.location && p.location.latitude && p.location.longitude
-  );
+  const validProperties = properties.filter(p => {
+    const latitude = p.latitude ?? p.location?.latitude;
+    const longitude = p.longitude ?? p.location?.longitude;
+    return latitude !== null && latitude !== undefined && longitude !== null && longitude !== undefined;
+  });
 
   if (!properties || properties.length === 0 || validProperties.length === 0) {
     return (
