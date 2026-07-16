@@ -139,7 +139,7 @@ class VerificationController extends Controller
      */
     public function approve(Request $request, $userId)
     {
-        $this->authorize('isAdmin');
+        abort_unless($request->user()?->isStaff(), 403, 'Solo el personal autorizado puede aprobar verificaciones.');
 
         $verification = UserVerification::where('user_id', $userId)->firstOrFail();
 
@@ -147,6 +147,11 @@ class VerificationController extends Controller
             'status' => 'aprobado',
             'verified_by_user_id' => auth()->id(),
             'verified_at' => now(),
+        ]);
+
+        $verification->user()->update([
+            'is_account_verified' => true,
+            'account_verified_at' => now(),
         ]);
 
         return back()->with('success', 'Verificación aprobada');
@@ -157,7 +162,7 @@ class VerificationController extends Controller
      */
     public function reject(Request $request, $userId)
     {
-        $this->authorize('isAdmin');
+        abort_unless($request->user()?->isStaff(), 403, 'Solo el personal autorizado puede rechazar verificaciones.');
 
         $request->validate([
             'reason' => 'required|string|max:255',
@@ -170,6 +175,11 @@ class VerificationController extends Controller
             'rejection_reason' => $request->input('reason'),
             'verified_by_user_id' => auth()->id(),
             'verified_at' => now(),
+        ]);
+
+        $verification->user()->update([
+            'is_account_verified' => false,
+            'account_verified_at' => null,
         ]);
 
         return back()->with('success', 'Verificación rechazada');

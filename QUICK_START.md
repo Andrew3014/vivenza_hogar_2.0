@@ -19,6 +19,15 @@
 
 ## ⚡ INSTALACIÓN RÁPIDA (5 minutos)
 
+### Antes de abrir la interfaz
+1. Confirma versiones: `php -v`, `composer -v`, `node -v`, `npm -v` y `mysql --version`.
+2. Crea `.env` desde `.env.example` y revisa `DB_CONNECTION=mysql`.
+3. Ejecuta `composer install` y `npm install`.
+4. Genera la llave de Laravel con `php artisan key:generate`.
+5. Crea la base de datos MySQL y corre `php artisan migrate`.
+6. Si necesitas datos iniciales, corre `php artisan db:seed`.
+7. Abre la UI con `php artisan dev` o con `php artisan serve` + `npm run dev`.
+
 ### Windows (PowerShell - Como Admin)
 ```powershell
 cd c:\laragon\www\vivenza_hogar
@@ -118,7 +127,7 @@ export default function MyPage({ myData }) {
     return (
         <AppLayout title="Mi Página">
             <Head title="Mi Página" />
-            
+
             <div className="container mx-auto py-8">
                 <h1 className="text-4xl font-bold">{myData.title}</h1>
                 {/* Tu contenido aquí */}
@@ -166,6 +175,13 @@ php artisan make:model MyModel -m  # -m para crear migración también
 ```
 
 ---
+
+## 🧭 ESTADO ACTUAL DEL ESQUEMA
+
+- `users` ya maneja datos base de autenticación y, en migraciones posteriores, verificación de cuenta, estado, documento y ubicación.
+- `user_verifications` ya existe para KYC con frente, reverso y selfie.
+- `properties` hoy cubre `venta` y `alquiler`, así que todavía falta extenderlo para `anticretico` y `alquiler_diario`.
+- Si el objetivo inmediato es entrar a la interfaz sin errores, primero debes tener `.env`, MySQL listo y las migraciones aplicadas.
 
 ## 🔧 COMANDOS ÚTILES
 

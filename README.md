@@ -19,6 +19,8 @@ Esta carpeta contiene documentación técnica completa:
 | **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** | 📦 Despliegue a producción paso a paso | DevOps/Sysadmins |
 | **[DATABASE_GUIDE.md](DATABASE_GUIDE.md)** | 🗄️ Configuración MySQL 100% | DBAs/Backend |
 | **[ROADMAP.md](ROADMAP.md)** | 🚀 Próximas mejoras y timeline | Tech Leads/PMs |
+| **[REVISION_ARQUITECTURA_2026-07-16.md](REVISION_ARQUITECTURA_2026-07-16.md)** | Revisión de roles, riesgos y estabilidad | Equipo técnico |
+| **[DICCIONARIO_INTEGRACION_FRONTEND.md](DICCIONARIO_INTEGRACION_FRONTEND.md)** | Rutas, campos, estados y reglas para React | Frontend/Backend |
 | **[ARCHITECTURE.md](ARCHITECTURE.md)** | 🏗️ Documentación técnica y diseño | Tech Leads/Arquitectos |
 | **[ANALYSIS_COMPATIBILITY.md](ANALYSIS_COMPATIBILITY.md)** | ⚠️ Análisis de compatibilidad v.11.0 | Tech Leads |
 
@@ -29,6 +31,13 @@ Esta carpeta contiene documentación técnica completa:
 ---
 
 ## ✨ CARACTERÍSTICAS
+
+### Gobierno por roles
+- `cliente`: comprador, arrendatario o cliente/vendedor; puede publicar con un plan activo.
+- `agente`: soporte operativo y revisión manual de verificaciones.
+- `admin`: usuarios, publicaciones, planes, reportes, configuración y cuentas internas.
+
+Contrato de rutas y campos para el frontend: [DICCIONARIO_INTEGRACION_FRONTEND.md](DICCIONARIO_INTEGRACION_FRONTEND.md).
 
 ### 🏠 Para Agentes Inmobiliarios
 - ✅ Crear y gestionar propiedades
@@ -59,6 +68,15 @@ Esta carpeta contiene documentación técnica completa:
 - Node.js 18+ LTS
 - npm 9+
 - MySQL 8.4+ (base de datos obligatoria)
+
+### Antes de entrar a la interfaz
+1. Verifica que `php`, `composer`, `node`, `npm` y `mysql` respondan en la terminal.
+2. Crea o revisa el archivo `.env` y confirma que `DB_CONNECTION=mysql` apunte a tu base local.
+3. Ejecuta `composer install` y `npm install` para restaurar dependencias.
+4. Genera la clave de Laravel con `php artisan key:generate`.
+5. Crea la base de datos y corre `php artisan migrate`.
+6. Si quieres datos de prueba, ejecuta `php artisan db:seed`.
+7. Levanta el frontend y backend con `php artisan dev` o con `php artisan serve` + `npm run dev`.
 
 ### Instalación (30 segundos)
 
@@ -110,6 +128,11 @@ Accede a `http://localhost:8000`
 | Admin Panel | ⏳ Desarrollo | P1 |
 | Notificaciones | ⏳ Planificado | P2 |
 | App Móvil | ⏳ Planificado | P3 |
+
+### Brechas detectadas frente al contexto boliviano
+- El esquema actual de `properties` todavía solo contempla `venta` y `alquiler`.
+- Falta extender la base para `anticretico` y `alquiler_diario` con campos específicos como DDRR, duración contractual, estadía mínima y garantía.
+- KYC ya existe de forma parcial con `user_verifications`, pero aún no cubre todo el flujo legal/comercial que describes en la interfaz.
 
 **Estimación para producción:** Listo para despliegue
 

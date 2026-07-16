@@ -5,13 +5,14 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
+use App\Support\Roles;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'phone', 'password', 'role', 'whatsapp_number', 'whatsapp_visible'])]
+#[Fillable(['name', 'email', 'phone', 'password', 'role', 'whatsapp_number', 'whatsapp_visible', 'document_extension'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -35,6 +36,15 @@ class User extends Authenticatable
         'role',
         'whatsapp_number',
         'whatsapp_visible',
+        'document_extension',
+        'is_account_verified',
+        'account_verified_at',
+        'account_status',
+        'document_number',
+        'avatar_url',
+        'bio',
+        'city',
+        'state',
     ];
 
     /**
@@ -46,6 +56,9 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'account_verified_at' => 'datetime',
+            'is_account_verified' => 'boolean',
+            'whatsapp_visible' => 'boolean',
             'password' => 'hashed',
         ];
     }
@@ -60,9 +73,52 @@ class User extends Authenticatable
         return $this->hasMany(Subscription::class);
     }
 
+    public function activeSubscription()
+    {
+        return $this->hasOne(Subscription::class)
+            ->where('status', 'active')
+            ->orderByDesc('end_date');
+    }
+
     public function verification()
     {
         return $this->hasOne(UserVerification::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === Roles::ADMIN;
+    }
+
+    public function isAgent(): bool
+    {
+        return $this->role === Roles::AGENT;
+    }
+
+    public function isClient(): bool
+    {
+        return $this->role === Roles::CLIENT;
+    }
+
+    /** Clientes/vendedores y agentes pueden publicar propiedades. */
+    public function canPublishProperties(): bool
+    {
+        return in_array($this->role, Roles::publishers(), true);
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->isAdmin() || $this->isAgent();
+    }
+
+    public function subscriptionPriority(): int
+    {
+        return match ($this->activeSubscription?->plan) {
+            'enterprise' => 3,
+            'premium' => 2,
+            'basic' => 1,
+            default => 0,
+        };
     }
 
     public function hasActiveSubscription(): bool
@@ -111,4 +167,3 @@ class User extends Authenticatable
         return $this->isVerified() && $this->whatsapp_visible && !empty($this->whatsapp_number);
     }
 }
-

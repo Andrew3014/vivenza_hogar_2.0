@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Property;
 use App\Models\Location;
+use App\Models\Subscription;
+use App\Support\PropertyTransactionTypes;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -12,19 +15,32 @@ class PropertyController extends Controller
 {
     public function index(Request $request): Response
     {
+        $transactionType = $request->input('transaction_type', $request->input('type'));
+        $subscriptionPriority = Subscription::query()
+            ->selectRaw("user_id, MAX(CASE plan WHEN 'enterprise' THEN 3 WHEN 'premium' THEN 2 WHEN 'basic' THEN 1 ELSE 0 END) as plan_priority")
+            ->where('status', 'active')
+            ->where('end_date', '>=', now())
+            ->groupBy('user_id');
+
         $query = Property::with([
             'location',
             'user',
+            'user.activeSubscription',
             'images' => function ($query) {
                 $query->first();
             },
         ])
+        ->leftJoinSub($subscriptionPriority, 'subscription_priority', function ($join) {
+            $join->on('properties.user_id', '=', 'subscription_priority.user_id');
+        })
+        ->select('properties.*')
         ->where('status', 'aprobado')
+        ->orderByRaw('COALESCE(subscription_priority.plan_priority, 0) DESC')
         ->orderBy('is_featured', 'desc')
         ->orderBy('created_at', 'desc');
 
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
+        if ($transactionType) {
+            $query->where('transaction_type', $transactionType);
         }
 
         if ($request->filled('location_id')) {
@@ -49,22 +65,32 @@ class PropertyController extends Controller
         return Inertia::render('Home', [
             'properties' => $properties,
             'locations' => $locations,
-            'filters' => $request->only(['type', 'location_id', 'min_price', 'max_price', 'featured']),
+            'filters' => array_merge(
+                $request->only(['type', 'transaction_type', 'location_id', 'min_price', 'max_price', 'featured']),
+                ['transaction_type' => $transactionType]
+            ),
         ]);
     }
 
     public function create(): Response
     {
-        if (! auth()->user()->hasActiveSubscription()) {
-            return Inertia::render('Properties/CreateError', [
+        $user = auth()->user();
+        $subscription = $user->subscriptions()->active()->first();
+
+        if (! $subscription) {
+            return Inertia::render('Property/Create', [
                 'message' => 'Debes tener una suscripción activa para crear propiedades.',
             ]);
         }
 
         $locations = Location::select('id', 'name', 'city')->get();
+        $subscriptionData = array_merge($subscription->toArray(), [
+            'properties_left' => max(0, $subscription->max_properties - $user->properties()->count()),
+        ]);
 
-        return Inertia::render('Properties/Create', [
+        return Inertia::render('Property/Create', [
             'locations' => $locations,
+            'subscription' => $subscriptionData,
         ]);
     }
 
@@ -91,12 +117,39 @@ class PropertyController extends Controller
             'title' => 'required|string|min:5|max:255',
             'description' => 'required|string|min:20',
             'price' => 'required|numeric|min:0',
-            'type' => 'required|in:venta,alquiler',
+            'type' => ['nullable', Rule::in(PropertyTransactionTypes::all())],
+            'transaction_type' => ['nullable', Rule::in(PropertyTransactionTypes::all())],
+            'currency' => 'nullable|in:USD,BOB',
+            'anticretico_registered_ddrr' => 'nullable|boolean',
+            'contract_duration_years' => 'nullable|integer|min:1|max:10',
+            'min_stay_days' => 'nullable|integer|min:1|max:365',
+            'requires_guarantee' => 'nullable|boolean',
+            'guarantee_amount' => 'nullable|numeric|min:0',
             'bedrooms' => 'nullable|integer|min:0',
             'bathrooms' => 'nullable|integer|min:0',
             'area' => 'nullable|numeric|min:0',
             'is_featured' => 'boolean',
         ]);
+
+        $transactionType = $validated['transaction_type'] ?? $validated['type'] ?? 'venta';
+        $validated['transaction_type'] = $transactionType;
+        $validated['type'] = $transactionType;
+        $validated['currency'] = $validated['currency'] ?? 'USD';
+        $validated['anticretico_registered_ddrr'] = $transactionType === 'anticretico'
+            ? $request->boolean('anticretico_registered_ddrr')
+            : false;
+        $validated['contract_duration_years'] = $transactionType === 'anticretico'
+            ? ($validated['contract_duration_years'] ?? 2)
+            : null;
+        $validated['min_stay_days'] = $transactionType === 'alquiler_diario'
+            ? ($validated['min_stay_days'] ?? 1)
+            : null;
+        $validated['requires_guarantee'] = $transactionType === 'alquiler_diario'
+            ? $request->boolean('requires_guarantee')
+            : false;
+        $validated['guarantee_amount'] = $transactionType === 'alquiler_diario' && $request->boolean('requires_guarantee')
+            ? ($validated['guarantee_amount'] ?? null)
+            : null;
 
         $validated['user_id'] = $user->id;
         $validated['status'] = 'pendiente';
@@ -110,6 +163,12 @@ class PropertyController extends Controller
 
     public function show(Property $property): Response
     {
+        $viewer = auth()->user();
+        if ($property->status !== 'aprobado'
+            && (! $viewer || ($viewer->id !== $property->user_id && ! $viewer->isStaff()))) {
+            abort(404);
+        }
+
         $property->load([
             'location',
             'user',
@@ -119,7 +178,7 @@ class PropertyController extends Controller
         $similarProperties = Property::with(['location', 'images'])
             ->where('status', 'aprobado')
             ->where('id', '!=', $property->id)
-            ->where('type', $property->type)
+            ->where('transaction_type', $property->transaction_type ?? $property->type)
             ->where('location_id', $property->location_id)
             ->limit(3)
             ->get();
@@ -136,7 +195,7 @@ class PropertyController extends Controller
 
         $locations = Location::select('id', 'name', 'city')->get();
 
-        return Inertia::render('Properties/Edit', [
+        return Inertia::render('Property/Edit', [
             'property' => $property,
             'locations' => $locations,
         ]);
@@ -151,12 +210,39 @@ class PropertyController extends Controller
             'title' => 'required|string|min:5|max:255',
             'description' => 'required|string|min:20',
             'price' => 'required|numeric|min:0',
-            'type' => 'required|in:venta,alquiler',
+            'type' => ['nullable', Rule::in(PropertyTransactionTypes::all())],
+            'transaction_type' => ['nullable', Rule::in(PropertyTransactionTypes::all())],
+            'currency' => 'nullable|in:USD,BOB',
+            'anticretico_registered_ddrr' => 'nullable|boolean',
+            'contract_duration_years' => 'nullable|integer|min:1|max:10',
+            'min_stay_days' => 'nullable|integer|min:1|max:365',
+            'requires_guarantee' => 'nullable|boolean',
+            'guarantee_amount' => 'nullable|numeric|min:0',
             'bedrooms' => 'nullable|integer|min:0',
             'bathrooms' => 'nullable|integer|min:0',
             'area' => 'nullable|numeric|min:0',
             'is_featured' => 'boolean',
         ]);
+
+        $transactionType = $validated['transaction_type'] ?? $validated['type'] ?? $property->transaction_type ?? $property->type;
+        $validated['transaction_type'] = $transactionType;
+        $validated['type'] = $transactionType;
+        $validated['currency'] = $validated['currency'] ?? $property->currency ?? 'USD';
+        $validated['anticretico_registered_ddrr'] = $transactionType === 'anticretico'
+            ? $request->boolean('anticretico_registered_ddrr')
+            : false;
+        $validated['contract_duration_years'] = $transactionType === 'anticretico'
+            ? ($validated['contract_duration_years'] ?? 2)
+            : null;
+        $validated['min_stay_days'] = $transactionType === 'alquiler_diario'
+            ? ($validated['min_stay_days'] ?? 1)
+            : null;
+        $validated['requires_guarantee'] = $transactionType === 'alquiler_diario'
+            ? $request->boolean('requires_guarantee')
+            : false;
+        $validated['guarantee_amount'] = $transactionType === 'alquiler_diario' && $request->boolean('requires_guarantee')
+            ? ($validated['guarantee_amount'] ?? null)
+            : null;
 
         if (! auth()->user()->hasActiveSubscription()) {
             unset($validated['is_featured']);
@@ -194,8 +280,14 @@ class PropertyController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return Inertia::render('Properties/UserList', [
-            'properties' => $properties,
+        return Inertia::render('Dashboard/User', [
+            'properties' => $properties->getCollection()->values(),
+            'pagination' => [
+                'current_page' => $properties->currentPage(),
+                'last_page' => $properties->lastPage(),
+                'total' => $properties->total(),
+            ],
+            'user' => auth()->user()->load('subscriptions'),
         ]);
     }
 }
