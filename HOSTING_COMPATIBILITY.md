@@ -7,7 +7,7 @@
 | PHP | Composer fija `^8.3` | PHP 8.3.x con `openssl`, `pdo_mysql`, `mbstring`, `tokenizer`, `xml`, `ctype`, `curl`, `fileinfo`, `gd` o ImageMagick y `zip`. |
 | Laravel | 11.x | Compatible con PHP 8.3. Laravel 11 requiere PHP 8.2 o superior. |
 | Base de datos | MySQL | El código usa funciones compatibles con MySQL 8.0+. Si el proveedor ofrece 8.4, también es compatible. Confirmar la versión exacta y no asumir que “MySQL 8” significa 8.4. |
-| Node/Vite | Node 18+ durante build | No hace falta Node en runtime si se ejecuta `npm run build` antes de subir y se publica `public/build`. |
+| Node/Vite | Node 20.19+ (o 22.12+) durante build | No hace falta Node en runtime si se ejecuta `npm run build` antes de subir y se publica `public/build`. Vite 8 ya no soporta Node 18. |
 | Leaflet/OpenStreetMap | Frontend | Funciona en navegador; revisar límites de tiles públicos antes de producción. |
 | Composer | Dependencias PHP | Ejecutar `composer install --no-dev --optimize-autoloader` en servidor o generar `vendor` en un entorno compatible. |
 
