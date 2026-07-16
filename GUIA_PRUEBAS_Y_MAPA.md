@@ -69,6 +69,8 @@ El escenario incluye cuatro publicaciones aprobadas: venta, alquiler, anticréti
 
 Antes de publicar, el frontend debe mostrar un resumen para confirmar precio, moneda, ubicación y datos legales. El backend siempre inicia la publicación en `pendiente`.
 
+Para el checklist comercial/legal, el equipo debe contrastar los documentos con las fuentes oficiales: [certificado de propiedad de Derechos Reales](https://cm.organojudicial.gob.bo/consejo/manualprocedimientosddrr/47_-certificado-de-propiedad-%28.html), [matriculación de inmueble](https://cm.organojudicial.gob.bo/consejo/requisitosddrr/19_-matriculacion-de-inmueble.html) y [Cédula de Identidad de SEGIP](https://www.segip.gob.bo/cedulas-de-identidad/). La plataforma puede registrar que un documento fue revisado, pero no debe presentarse como validación legal automática.
+
 ## 4. Comportamiento esperado de filtros
 
 El usuario debe poder combinar filtros sin perder la sección seleccionada:
@@ -99,6 +101,8 @@ La URL de Google Maps se genera así:
 ```text
 https://www.google.com/maps/search/?api=1&query={latitude},{longitude}
 ```
+
+Leaflet está configurado con tiles públicos de OpenStreetMap y atribución visible. Antes de producción hay que revisar la [política oficial de uso de tiles](https://operations.osmfoundation.org/policies/tiles/) o contratar un proveedor de mapas con límites y SLA.
 
 No se debe mostrar la dirección exacta de una vivienda sensible sin autorización del propietario; se puede mostrar una zona aproximada en la vista pública y reservar el punto exacto para usuarios autenticados.
 
