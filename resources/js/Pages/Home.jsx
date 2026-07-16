@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import PropertyMap from '@/Components/Map/PropertyMap';
 import { formatCurrency } from '@/utils';
@@ -55,6 +55,16 @@ export default function Home({ properties = [] }) {
         }));
     };
 
+    const applyServerFilters = () => {
+        router.get(route('properties.index'), {
+            transaction_type: filters.type || undefined,
+            min_price: filters.minPrice || undefined,
+            max_price: filters.maxPrice || undefined,
+            bedrooms: filters.bedrooms || undefined,
+            search: filters.search || undefined,
+        }, { preserveState: true, replace: true, preserveScroll: true });
+    };
+
     // Contar filtros activos
     const activeFiltersCount = Object.values(filters).filter(v => v !== '').length;
 
@@ -87,6 +97,8 @@ export default function Home({ properties = [] }) {
                                 <option value="">Comprar</option>
                                 <option value="venta">Venta</option>
                                 <option value="alquiler">Alquiler</option>
+                                <option value="anticretico">Anticrético</option>
+                                <option value="alquiler_diario">Alquiler diario</option>
                             </select>
 
                             {/* Búsqueda por dirección/ciudad/título */}
@@ -126,7 +138,7 @@ export default function Home({ properties = [] }) {
                             </select>
 
                             {/* Botón Buscar */}
-                            <button className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold text-sm">
+                            <button type="button" onClick={applyServerFilters} className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold text-sm">
                                 🔍 Buscar
                             </button>
                         </div>
@@ -158,7 +170,7 @@ export default function Home({ properties = [] }) {
                                                 <div>
                                                     <span className="text-gray-600">Tipo:</span>
                                                     <span className="font-semibold text-gray-900 ml-2 bg-gray-100 px-2 py-1 rounded text-xs">
-                                                        {filters.type === 'venta' ? 'Venta' : 'Alquiler'}
+                                                        {{ venta: 'Venta', alquiler: 'Alquiler', anticretico: 'Anticrético', alquiler_diario: 'Alquiler diario' }[filters.type] || filters.type}
                                                     </span>
                                                 </div>
                                             )}
@@ -221,6 +233,8 @@ export default function Home({ properties = [] }) {
                                     <option value="">Todos</option>
                                     <option value="venta">Venta</option>
                                     <option value="alquiler">Alquiler</option>
+                                    <option value="anticretico">Anticrético</option>
+                                    <option value="alquiler_diario">Alquiler diario</option>
                                 </select>
                             </div>
 
@@ -273,6 +287,14 @@ export default function Home({ properties = [] }) {
 
                             {/* Clear Filters Button */}
                             <button
+                                type="button"
+                                onClick={applyServerFilters}
+                                className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Aplicar filtros
+                            </button>
+                            <button
+                                type="button"
                                 onClick={() => setFilters({ type: '', minPrice: '', maxPrice: '', bedrooms: '', search: '' })}
                                 className="w-full mt-6 bg-gray-300 hover:bg-gray-400 text-gray-900 font-bold py-2 px-4 rounded"
                             >
@@ -326,7 +348,7 @@ export default function Home({ properties = [] }) {
                                                 {/* Badges */}
                                                 <div className="absolute top-3 left-3">
                                                     <span className="text-xs font-bold">
-                                                        {property.type === 'venta' ? 'Venta' : 'Alquiler'}
+                                                        {{ venta: 'Venta', alquiler: 'Alquiler', anticretico: 'Anticrético', alquiler_diario: 'Alquiler diario' }[property.transaction_type || property.type] || property.type}
                                                     </span>
                                                 </div>
 

@@ -2,14 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Roles;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    private const ALLOWED_ROLES = ['admin', 'agente', 'cliente'];
-
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         if (empty($roles)) {
@@ -22,7 +21,7 @@ class RoleMiddleware
 
         $userRole = $request->user()->role ?? null;
 
-        if (! in_array($userRole, self::ALLOWED_ROLES)) {
+        if (! in_array($userRole, Roles::all(), true)) {
             abort(403, 'Rol de usuario desconocido.');
         }
 

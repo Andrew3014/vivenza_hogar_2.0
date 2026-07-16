@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm, Link, usePage } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { formatCurrency } from '@/utils';
+import PropertyLocationPicker from '@/Components/Map/PropertyLocationPicker';
 
 /**
  * Página para Crear/Publicar Nueva Propiedad
@@ -20,9 +21,17 @@ export default function PropertyCreate({ locations = [], subscription }) {
         description: '',
         price: '',
         type: 'venta',
+        currency: 'BOB',
+        anticretico_registered_ddrr: false,
+        contract_duration_years: '',
+        min_stay_days: '',
+        requires_guarantee: false,
+        guarantee_amount: '',
         bedrooms: '',
         bathrooms: '',
         area: '',
+        latitude: '',
+        longitude: '',
         is_featured: false,
         year_built: '',
         parking: '',
@@ -130,7 +139,14 @@ export default function PropertyCreate({ locations = [], subscription }) {
                                     </label>
                                     <select
                                         value={data.location_id}
-                                        onChange={(e) => setData('location_id', e.target.value)}
+                                        onChange={(e) => {
+                                            const selected = locations.find((location) => String(location.id) === e.target.value);
+                                            setData('location_id', e.target.value);
+                                            if (selected?.latitude && selected?.longitude) {
+                                                setData('latitude', selected.latitude);
+                                                setData('longitude', selected.longitude);
+                                            }
+                                        }}
                                         className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
                                             errors.location_id
                                                 ? 'border-red-500 bg-red-50'
@@ -148,6 +164,24 @@ export default function PropertyCreate({ locations = [], subscription }) {
                                     {errors.location_id && (
                                         <p className="text-red-600 text-sm mt-2">📌 {errors.location_id}</p>
                                     )}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                        📍 Ubicación exacta en el mapa
+                                    </label>
+                                    <PropertyLocationPicker
+                                        value={{ latitude: data.latitude, longitude: data.longitude }}
+                                        onChange={({ latitude, longitude }) => {
+                                            setData('latitude', latitude);
+                                            setData('longitude', longitude);
+                                        }}
+                                    />
+                                    <p className="mt-2 text-xs text-gray-500">
+                                        Haz clic o arrastra el marcador. Se guardan las coordenadas exactas de la publicación.
+                                    </p>
+                                    {errors.latitude && <p className="text-red-600 text-sm mt-2">{errors.latitude}</p>}
+                                    {errors.longitude && <p className="text-red-600 text-sm mt-2">{errors.longitude}</p>}
                                 </div>
 
                                 {/* Title */}
@@ -194,6 +228,8 @@ export default function PropertyCreate({ locations = [], subscription }) {
                                         >
                                             <option value="venta">🔨 Venta</option>
                                             <option value="alquiler">🏠 Alquiler</option>
+                                            <option value="anticretico">Anticrético</option>
+                                            <option value="alquiler_diario">Alquiler diario</option>
                                         </select>
                                         {errors.type && (
                                             <p className="text-red-600 text-sm mt-2">📌 {errors.type}</p>
@@ -226,6 +262,40 @@ export default function PropertyCreate({ locations = [], subscription }) {
                                         )}
                                     </div>
                                 </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-3">Moneda</label>
+                                    <select
+                                        value={data.currency}
+                                        onChange={(e) => setData('currency', e.target.value)}
+                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg"
+                                        disabled={processing}
+                                    >
+                                        <option value="BOB">Bolivianos (BOB)</option>
+                                        <option value="USD">Dólares (USD)</option>
+                                    </select>
+                                </div>
+
+                                {data.type === 'anticretico' && (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 rounded-lg bg-amber-50 p-4">
+                                        <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
+                                            <input type="checkbox" checked={data.anticretico_registered_ddrr} onChange={(e) => setData('anticretico_registered_ddrr', e.target.checked)} />
+                                            Documentación DDRR registrada
+                                        </label>
+                                        <input type="number" min="1" max="10" value={data.contract_duration_years} onChange={(e) => setData('contract_duration_years', e.target.value)} placeholder="Duración (años)" className="rounded border p-3" />
+                                    </div>
+                                )}
+
+                                {data.type === 'alquiler_diario' && (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 rounded-lg bg-sky-50 p-4">
+                                        <input type="number" min="1" max="365" value={data.min_stay_days} onChange={(e) => setData('min_stay_days', e.target.value)} placeholder="Mínimo de noches" className="rounded border p-3" />
+                                        <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
+                                            <input type="checkbox" checked={data.requires_guarantee} onChange={(e) => setData('requires_guarantee', e.target.checked)} />
+                                            Requiere garantía
+                                        </label>
+                                        {data.requires_guarantee && <input type="number" min="0" value={data.guarantee_amount} onChange={(e) => setData('guarantee_amount', e.target.value)} placeholder="Monto de garantía" className="rounded border p-3" />}
+                                    </div>
+                                )}
 
                                 {/* Description */}
                                 <div>

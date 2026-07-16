@@ -15,6 +15,23 @@
 
 ## 🎯 PRÓXIMAS MEJORAS (Priorizado)
 
+### **FASE 0: ESTRUCTURA SEGURA Y BASE ACTUAL**
+**Prioridad:** 🔴 CRÍTICA | **Estimado:** 1-2 días
+
+**Objetivo:** dejar el proyecto sólido antes de tocar la interfaz o extender negocio.
+
+**Tareas:**
+- [ ] Verificar `.env`, MySQL y migraciones en local
+- [ ] Alinear modelos con columnas reales de la base
+- [ ] Definir estados y tipos como constantes o enums centralizados
+- [ ] Separar lo que ya funciona de lo que sigue pendiente
+- [ ] Agregar seeders mínimos para pruebas locales
+
+**Resultado esperado:**
+- Arranque predecible en una máquina nueva
+- Menos desalineación entre migraciones, modelos y UI
+- Base lista para ampliar KYC, propiedades y notificaciones sin romper lo existente
+
 ### **FASE 1: BACKEND & CORE (Semanas 1-3)**
 
 #### 1.1 Sistema de Verificación ✅ COMPLETADO
@@ -48,6 +65,10 @@ database/migrations/*_create_notifications_table.php
 - `POST /notifications/mark-read/{id}`
 - `DELETE /notifications/{id}`
 - `GET /api/notifications`
+
+**Estado actual del repo:**
+- La tabla `notifications` ya existe.
+- Falta el modelo, los eventos y los disparadores de negocio.
 
 ---
 
@@ -224,6 +245,21 @@ npm install workbox-webpack       # PWA
 
 ## 📋 BACKLOG ADICIONAL
 
+### Gobierno por Rol
+- **Administrador:** control total de usuarios, publicaciones, suscripciones, reportes, moderación, configuración general, auditoría y soporte operativo.
+- **Agente:** revisión y verificación de usuarios, validación de documentos, aprobación o rechazo de verificaciones, seguimiento de cuentas y apoyo en incidencias.
+- **Cliente / Vendedor:** publicación de propiedades, edición, consultas, notificaciones y seguimiento de su plan.
+
+### Recomendación para publicaciones de planes altos
+- No conviene fijarlas siempre de forma manual en primer lugar.
+- Mejor usar un ranking dinámico con esta prioridad:
+   1. Plan activo más alto: `enterprise` > `premium` > `basic`
+   2. Publicaciones destacadas (`is_featured`)
+   3. Publicaciones con mejor rendimiento: vistas, consultas y favoritos
+   4. Fecha de publicación reciente
+- Así la publicación premium sigue arriba de forma estable, pero el listado sigue pareciendo natural y justo.
+- Si quieres máxima visibilidad comercial, combina `featured_until` con el ranking, no solo un pin fijo.
+
 ### Funcionalidades Importantes
 - [ ] Two-factor authentication (2FA)
 - [ ] Dark mode
@@ -234,12 +270,26 @@ npm install workbox-webpack       # PWA
 - [ ] Documentos legales (contratos)
 - [ ] Historial de precios
 
+### Estructura Bolivia primero
+- [ ] Expandir `properties` para `anticretico` y `alquiler_diario`
+- [ ] Agregar campos legales para anticrético: DDRR, duración contractual
+- [ ] Agregar campos operativos para alquiler diario: mínimo de noches, garantía
+- [ ] Unificar el flujo KYC con CI, selfies y estado de verificación
+- [ ] Separar claramente `venta`, `anticretico`, `alquiler` y `alquiler_diario` en UI y backend
+
 ### Mejoras de Seguridad
 - [ ] Rate limiting en APIs
 - [ ] CORS mejorado
 - [ ] Validación de imágenes (virus scan)
 - [ ] Encriptación de datos sensibles
 - [ ] Audit logging completo
+
+### Ideas extra que sí aportan valor
+- [ ] Bandeja de notificaciones por tipo: cuenta, publicación, plan, soporte y verificación
+- [ ] Alertas automáticas cuando falten datos obligatorios en una publicación
+- [ ] Mensajes al usuario cuando su verificación fue rechazada con motivo claro
+- [ ] Historial de cambios de estado de la cuenta y de cada publicación
+- [ ] Exportación CSV/PDF para admin de usuarios, propiedades y verificaciones
 
 ### DevOps & Deployment
 - [ ] CI/CD pipeline (GitHub Actions)
