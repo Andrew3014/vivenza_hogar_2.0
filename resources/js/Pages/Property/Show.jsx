@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import PropertyMapDetail from '@/Components/Map/PropertyMapDetail';
 import ContactAgentViaWhatsApp from '@/Components/WhatsApp/ContactAgentViaWhatsApp';
@@ -11,12 +11,14 @@ import { formatCurrency, buildWhatsAppPropertyMessage } from '@/utils';
  * Props desde Laravel:
  * - property: Objeto con información completa de la propiedad
  * - auth: Usuario autenticado (si existe)
- * - relatedProperties: Propiedades similares (opcional)
+ * - similarProperties: Propiedades similares (opcional)
  */
-export default function PropertyShow({ property, relatedProperties = [] }) {
+export default function PropertyShow({ property, similarProperties = [], isFavorite = false }) {
     const { auth } = usePage().props;
     const [mainImage, setMainImage] = useState(0);
     const [imageZoom, setImageZoom] = useState(false);
+    const [favorited, setFavorited] = useState(isFavorite);
+    const [favoriteProcessing, setFavoriteProcessing] = useState(false);
 
     // Validar si el usuario es el propietario
     const isOwner = auth?.user?.id === property.user_id;
@@ -30,6 +32,23 @@ export default function PropertyShow({ property, relatedProperties = [] }) {
     const handleWhatsAppContact = () => {
         const message = buildWhatsAppPropertyMessage(property, auth?.user?.name || 'Cliente');
         window.location.href = `https://wa.me/59169422021?text=${encodeURIComponent(message)}`;
+    };
+
+    const toggleFavorite = () => {
+        const routeName = favorited ? 'favorites.destroy' : 'favorites.store';
+        const nextValue = !favorited;
+        const options = {
+            preserveScroll: true,
+            onStart: () => setFavoriteProcessing(true),
+            onSuccess: () => setFavorited(nextValue),
+            onFinish: () => setFavoriteProcessing(false),
+        };
+
+        if (favorited) {
+            router.delete(route(routeName, property.id), options);
+        } else {
+            router.post(route(routeName, property.id), {}, options);
+        }
     };
 
     return (
@@ -257,6 +276,37 @@ export default function PropertyShow({ property, relatedProperties = [] }) {
 
                         {/* Sidebar */}
                         <div className="lg:col-span-1">
+                            <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+                                {auth?.user ? (
+                                    <button
+                                        type="button"
+                                        onClick={toggleFavorite}
+                                        disabled={favoriteProcessing}
+                                        className={`w-full font-bold py-3 px-5 rounded-lg transition-colors disabled:opacity-60 ${
+                                            favorited
+                                                ? 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100'
+                                                : 'bg-blue-600 text-white hover:bg-blue-700'
+                                        }`}
+                                    >
+                                        {favoriteProcessing
+                                            ? 'Guardando...'
+                                            : favorited
+                                                ? '♥ Quitar de favoritos'
+                                                : '♡ Guardar en favoritos'}
+                                    </button>
+                                ) : (
+                                    <Link
+                                        href={route('login')}
+                                        className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-lg text-center transition-colors"
+                                    >
+                                        ♡ Inicia sesión para guardar
+                                    </Link>
+                                )}
+                                <p className="text-sm text-gray-500 mt-3 text-center">
+                                    {property.favorites_count || 0} persona(s) guardaron esta propiedad
+                                </p>
+                            </div>
+
                             {/* WhatsApp Contact - New Verified System */}
                             {!isOwner && auth?.user && (
                                 <div className="mb-8">
@@ -316,14 +366,6 @@ export default function PropertyShow({ property, relatedProperties = [] }) {
                                         📧 Enviar Email
                                     </a>
 
-                                    {/* Also show auth check */}
-                                    {!auth?.user && (
-                                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
-                                            <p className="text-sm text-yellow-900">
-                                                <strong>Nota:</strong> Inicia sesión para guardar en favoritos
-                                            </p>
-                                        </div>
-                                    )}
                                 </div>
                             )}
 
@@ -379,13 +421,13 @@ export default function PropertyShow({ property, relatedProperties = [] }) {
                     </div>
 
                     {/* Related Properties */}
-                    {relatedProperties.length > 0 && (
+                    {similarProperties.length > 0 && (
                         <div className="mt-12">
                             <h2 className="text-3xl font-bold text-gray-900 mb-8">
                                 Propiedades Similares
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {relatedProperties.slice(0, 3).map(relProp => (
+                                {similarProperties.slice(0, 3).map(relProp => (
                                     <Link
                                         key={relProp.id}
                                         href={route('properties.show', relProp.id)}

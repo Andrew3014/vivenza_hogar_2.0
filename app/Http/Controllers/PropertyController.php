@@ -201,6 +201,7 @@ class PropertyController extends Controller
             'user',
             'images',
         ]);
+        $property->loadCount('favorites');
 
         $similarProperties = Property::with(['location', 'images'])
             ->where('status', 'aprobado')
@@ -213,6 +214,9 @@ class PropertyController extends Controller
         return Inertia::render('Property/Show', [
             'property' => $property,
             'similarProperties' => $similarProperties,
+            'isFavorite' => $viewer
+                ? $viewer->favoriteProperties()->whereKey($property->id)->exists()
+                : false,
         ]);
     }
 

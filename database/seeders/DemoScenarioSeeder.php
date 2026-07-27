@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Favorite;
 use App\Models\Location;
 use App\Models\Property;
 use App\Models\Subscription;
@@ -62,7 +63,7 @@ class DemoScenarioSeeder extends Seeder
             return [$data['name'] . '|' . $data['city'] => $location];
         });
 
-        $this->property($agent, $locations['Sopocachi|La Paz'], [
+        $saleProperty = $this->property($agent, $locations['Sopocachi|La Paz'], [
             'title' => 'Demo venta — departamento en Sopocachi',
             'description' => 'Departamento de prueba para validar filtros de venta, precio, dormitorios y marcador del mapa.',
             'price' => 560000,
@@ -123,6 +124,15 @@ class DemoScenarioSeeder extends Seeder
             'requires_guarantee' => true,
             'guarantee_amount' => 500,
         ]);
+
+        Favorite::firstOrCreate([
+            'user_id' => $client->id,
+            'property_id' => $saleProperty->id,
+        ]);
+
+        $saleProperty->update([
+            'favorites_count' => $saleProperty->favorites()->count(),
+        ]);
     }
 
     private function user(array $data): User
@@ -173,11 +183,11 @@ class DemoScenarioSeeder extends Seeder
         ]);
     }
 
-    private function property(User $owner, Location $location, array $data): void
+    private function property(User $owner, Location $location, array $data): Property
     {
         $type = $data['transaction_type'];
 
-        Property::updateOrCreate(
+        return Property::updateOrCreate(
             ['title' => $data['title'], 'user_id' => $owner->id],
             $data + [
                 'user_id' => $owner->id,

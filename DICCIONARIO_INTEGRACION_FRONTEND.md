@@ -25,6 +25,9 @@ Todas las rutas protegidas necesitan sesión y email verificado. Las rutas de es
 | `PATCH` | `/properties/{property}` | propietario | Editar su publicación. |
 | `DELETE` | `/properties/{property}` | propietario | Eliminar su publicación. |
 | `GET` | `/my-properties` | autenticado | Sus publicaciones. |
+| `GET` | `/mis-favoritos` | autenticado | Listado paginado de las propiedades guardadas por la cuenta. Nombre: `favorites.index`. |
+| `POST` | `/properties/{property}/favorite` | autenticado | Guardar una publicación aprobada. Es idempotente. Nombre: `favorites.store`. |
+| `DELETE` | `/properties/{property}/favorite` | autenticado | Quitar únicamente el favorito de la cuenta actual. Nombre: `favorites.destroy`. |
 | `GET` | `/verification` | autenticado | Estado y formulario KYC. |
 | `POST` | `/verification/submit` | autenticado | Enviar documento frente/reverso y selfie en base64. |
 | `GET` | `/agent/verificaciones` | `agente` | Bandeja de verificaciones pendientes. |
@@ -65,6 +68,26 @@ Reglas condicionales:
 - Toda publicación nueva inicia en `status = pendiente`; únicamente personal autorizado puede aprobarla.
 
 Estados de publicación: `pendiente`, `aprobado`, `rechazado`.
+
+## Favoritos
+
+La tabla `favorites` almacena `user_id`, `property_id` y fechas. Su clave única compuesta impide que una cuenta guarde dos veces la misma propiedad; las claves foráneas eliminan automáticamente los favoritos si se borra la cuenta o la publicación.
+
+En el detalle `Property/Show`, Laravel entrega:
+
+```json
+{
+  "property": {
+    "id": 1,
+    "favorites_count": 3
+  },
+  "isFavorite": true
+}
+```
+
+El botón debe usar `favorites.store` cuando `isFavorite` sea falso y `favorites.destroy` cuando sea verdadero. La pantalla `Favorites/Index` recibe `properties` con el formato normal del paginador de Laravel (`data`, `current_page`, `last_page`, `prev_page_url`, `next_page_url`). Solo lista publicaciones aprobadas.
+
+No hay que importar un SQL separado para esta función: la migración `2026_03_21_054233_create_favorites_table.php` se ejecuta con `php artisan migrate`. El escenario `DemoScenarioSeeder` deja al usuario `cliente.demo@vivenza.test` con una propiedad favorita para probar la interfaz.
 
 ## Usuario y verificación
 

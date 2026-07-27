@@ -7,7 +7,7 @@ export default function AppLayout({ children }) {
     const [userMenuOpen, setUserMenuOpen] = useState(false);
 
     const isAdmin = auth?.user?.role === 'admin';
-    const isAgente = auth?.user?.role === 'agente';
+    const canPublish = ['agente', 'cliente'].includes(auth?.user?.role);
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
@@ -56,7 +56,7 @@ export default function AppLayout({ children }) {
                                         📌 Propiedades
                                     </Link>
 
-                                    {isAgente && (
+                                    {canPublish && (
                                         <Link
                                             href={route('properties.create')}
                                             className="text-gray-700 hover:text-blue-600 font-semibold transition-colors"
@@ -94,6 +94,12 @@ export default function AppLayout({ children }) {
                                                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                                                 >
                                                     📊 Mi Panel
+                                                </Link>
+                                                <Link
+                                                    href={route('favorites.index')}
+                                                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                                                >
+                                                    ♥ Mis Favoritos
                                                 </Link>
                                                 <Link
                                                     href={route('profile.edit')}
@@ -168,7 +174,7 @@ export default function AppLayout({ children }) {
                                         📊 Mi Panel
                                     </Link>
 
-                                    {isAgente && (
+                                    {canPublish && (
                                         <Link
                                             href={route('properties.create')}
                                             className="block px-4 py-2 text-gray-700 hover:bg-blue-50 rounded transition-colors"
@@ -176,6 +182,13 @@ export default function AppLayout({ children }) {
                                             📝 Publicar Propiedad
                                         </Link>
                                     )}
+
+                                    <Link
+                                        href={route('favorites.index')}
+                                        className="block px-4 py-2 text-gray-700 hover:bg-blue-50 rounded transition-colors"
+                                    >
+                                        ♥ Mis Favoritos
+                                    </Link>
 
                                     {isAdmin && (
                                         <Link

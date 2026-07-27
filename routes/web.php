@@ -6,6 +6,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\WhatsAppController;
+use App\Http\Controllers\FavoriteController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -32,6 +33,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/my-properties', [PropertyController::class, 'userProperties'])->name('properties.user');
+
+    Route::get('/mis-favoritos', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/properties/{property}/favorite', [FavoriteController::class, 'store'])->name('favorites.store');
+    Route::delete('/properties/{property}/favorite', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 
     Route::get('/pago', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/pago/suscripcion', [PaymentController::class, 'contactSubscription'])->name('payment.subscription');
