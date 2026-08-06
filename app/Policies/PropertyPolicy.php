@@ -12,13 +12,23 @@ class PropertyPolicy
         return $user->isAdmin() ? true : null;
     }
 
+    /**
+     * Permite ver listado de propiedades propias
+     */
+    public function viewAny(User $user): bool
+    {
+        return $user->canPublishProperties();
+    }
+
     public function update(User $user, Property $property): bool
     {
-        return $user->canPublishProperties() && $property->user_id === $user->id;
+        return $user->canPublishProperties() 
+            && $property->user_id === $user->id;
     }
 
     public function delete(User $user, Property $property): bool
     {
-        return $user->canPublishProperties() && $property->user_id === $user->id;
+        return $user->canPublishProperties() 
+            && $property->user_id === $user->id;
     }
 }

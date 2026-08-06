@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 
 /**
- * Navbar - Barra de Navegación Reutilizable
+ * Navbar - Barra de Navegación Reutilizable con estilos VIVENZA
  * 
  * Props:
  * - sticky: boolean (fijar en top)
@@ -17,37 +17,65 @@ export default function Navbar({ sticky = true, className = '' }) {
     const isAgente = auth?.user?.role === 'agente';
 
     return (
-        <nav className={`bg-white shadow-lg ${sticky ? 'sticky top-0 z-50' : ''} ${className}`}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-16">
+        <nav className={`vz-navbar ${className}`}>
+            <div className="vz-container">
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    height: '70px'
+                }}>
                     {/* Logo */}
-                    <Link href={route('home')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                        <span className="text-2xl">🏠</span>
-                        <span className="font-bold text-xl text-blue-600 hidden sm:inline">
-                            Vivenza
-                        </span>
+                    <Link 
+                        href={route('home')} 
+                        className="vz-logo"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        VIVENZA
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-8">
+                    <div style={{
+                        display: 'none',
+                        '@media (min-width: 768px)': {
+                            display: 'flex'
+                        },
+                        alignItems: 'center',
+                        gap: '32px'
+                    }} className="desktop-nav">
                         <Link
                             href={route('home')}
-                            className="text-gray-700 hover:text-blue-600 font-semibold transition-colors"
+                            className="vz-nav-link"
+                            style={{ 
+                                textDecoration: 'none',
+                                color: 'var(--gris-texto)',
+                                fontWeight: '500',
+                                fontSize: '14px',
+                                transition: 'color 0.3s ease'
+                            }}
                         >
-                            🏠 Inicio
+                            Inicio
                         </Link>
 
                         {!auth?.user ? (
                             <>
                                 <Link
                                     href={route('plans.index')}
-                                    className="text-gray-700 hover:text-blue-600 font-semibold transition-colors"
+                                    className="vz-nav-link"
+                                    style={{ 
+                                        textDecoration: 'none',
+                                        color: 'var(--gris-texto)',
+                                        fontWeight: '500',
+                                        fontSize: '14px',
+                                        transition: 'color 0.3s ease'
+                                    }}
                                 >
-                                    📦 Planes
+                                    Planes
                                 </Link>
                                 <Link
                                     href={route('login')}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors"
+                                    className="vz-btn-signin"
+                                    style={{ textDecoration: 'none' }}
                                 >
                                     Ingresar
                                 </Link>
@@ -56,73 +84,173 @@ export default function Navbar({ sticky = true, className = '' }) {
                             <>
                                 <Link
                                     href={route('home')}
-                                    className="text-gray-700 hover:text-blue-600 font-semibold transition-colors"
+                                    className="vz-nav-link"
+                                    style={{ 
+                                        textDecoration: 'none',
+                                        color: 'var(--gris-texto)',
+                                        fontWeight: '500',
+                                        fontSize: '14px',
+                                        transition: 'color 0.3s ease'
+                                    }}
                                 >
-                                    📌 Propiedades
+                                    Propiedades
                                 </Link>
 
                                 {isAgente && (
                                     <Link
                                         href={route('properties.create')}
-                                        className="text-gray-700 hover:text-blue-600 font-semibold transition-colors"
+                                        className="vz-nav-link"
+                                        style={{ 
+                                            textDecoration: 'none',
+                                            color: 'var(--gris-texto)',
+                                            fontWeight: '500',
+                                            fontSize: '14px',
+                                            transition: 'color 0.3s ease'
+                                        }}
                                     >
-                                        📝 Publicar
+                                        Publicar
                                     </Link>
                                 )}
 
                                 {isAdmin && (
                                     <Link
                                         href={route('admin.dashboard')}
-                                        className="text-red-600 hover:text-red-700 font-semibold transition-colors"
+                                        style={{ 
+                                            textDecoration: 'none',
+                                            color: '#ff6b6b',
+                                            fontWeight: '600',
+                                            fontSize: '14px',
+                                            transition: 'color 0.3s ease'
+                                        }}
                                     >
-                                        🔐 Admin
+                                        Admin
                                     </Link>
                                 )}
 
                                 {/* User Menu Desktop */}
-                                <div className="relative">
+                                <div style={{ position: 'relative' }}>
                                     <button
                                         onClick={() => setUserMenuOpen(!userMenuOpen)}
-                                        className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition-colors"
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            background: 'var(--gris-oscuro)',
+                                            color: 'var(--gris-texto)',
+                                            padding: '10px 16px',
+                                            borderRadius: '6px',
+                                            border: '1px solid var(--gris-oscuro)',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.3s ease',
+                                            fontSize: '14px',
+                                            fontWeight: '500'
+                                        }}
+                                        onMouseEnter={() => setUserMenuOpen(true)}
                                     >
-                                        <span className="text-lg">👤</span>
-                                        <span className="text-sm font-semibold text-gray-700 hidden sm:inline">
-                                            {auth.user.name}
-                                        </span>
-                                        <span className="text-xs">▼</span>
+                                        <span>👤</span>
+                                        <span className="hidden sm:inline">{auth.user.name}</span>
+                                        <span>▼</span>
                                     </button>
 
                                     {userMenuOpen && (
                                         <div 
-                                            className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 z-10"
+                                            style={{
+                                                position: 'absolute',
+                                                right: '0',
+                                                marginTop: '8px',
+                                                width: '224px',
+                                                background: 'var(--negro-oscuro)',
+                                                borderRadius: '8px',
+                                                border: '1px solid var(--gris-oscuro)',
+                                                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+                                                paddingTop: '8px',
+                                                paddingBottom: '8px',
+                                                zIndex: '10'
+                                            }}
                                             onMouseLeave={() => setUserMenuOpen(false)}
                                         >
                                             <Link
                                                 href={route('dashboard')}
-                                                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors font-semibold"
+                                                className="vz-menu-item"
+                                                style={{
+                                                    display: 'block',
+                                                    paddingLeft: '16px',
+                                                    paddingRight: '16px',
+                                                    paddingTop: '10px',
+                                                    paddingBottom: '10px',
+                                                    color: 'var(--gris-texto)',
+                                                    transition: 'all 0.3s ease',
+                                                    textDecoration: 'none',
+                                                    fontSize: '14px',
+                                                    fontWeight: '500'
+                                                }}
                                             >
-                                                📊 Mi Panel
+                                                Mi Panel
                                             </Link>
                                             <Link
                                                 href={route('profile.edit')}
-                                                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors font-semibold"
+                                                className="vz-menu-item"
+                                                style={{
+                                                    display: 'block',
+                                                    paddingLeft: '16px',
+                                                    paddingRight: '16px',
+                                                    paddingTop: '10px',
+                                                    paddingBottom: '10px',
+                                                    color: 'var(--gris-texto)',
+                                                    transition: 'all 0.3s ease',
+                                                    textDecoration: 'none',
+                                                    fontSize: '14px',
+                                                    fontWeight: '500'
+                                                }}
                                             >
-                                                ⚙️ Configuración
+                                                Configuración
                                             </Link>
                                             <Link
                                                 href={route('payment.index')}
-                                                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors font-semibold"
+                                                className="vz-menu-item"
+                                                style={{
+                                                    display: 'block',
+                                                    paddingLeft: '16px',
+                                                    paddingRight: '16px',
+                                                    paddingTop: '10px',
+                                                    paddingBottom: '10px',
+                                                    color: 'var(--gris-texto)',
+                                                    transition: 'all 0.3s ease',
+                                                    textDecoration: 'none',
+                                                    fontSize: '14px',
+                                                    fontWeight: '500'
+                                                }}
                                             >
-                                                💳 Mi Suscripción
+                                                Mi Suscripción
                                             </Link>
-                                            <hr className="my-2" />
+                                            <hr style={{
+                                                margin: '8px 0',
+                                                borderColor: 'var(--gris-oscuro)',
+                                                backgroundColor: 'var(--gris-oscuro)'
+                                            }} />
                                             <Link
                                                 href={route('logout')}
                                                 method="post"
                                                 as="button"
-                                                className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors font-semibold"
+                                                className="vz-menu-item-danger"
+                                                style={{
+                                                    width: '100%',
+                                                    textAlign: 'left',
+                                                    paddingLeft: '16px',
+                                                    paddingRight: '16px',
+                                                    paddingTop: '10px',
+                                                    paddingBottom: '10px',
+                                                    color: '#ff6b6b',
+                                                    transition: 'all 0.3s ease',
+                                                    border: 'none',
+                                                    background: 'none',
+                                                    cursor: 'pointer',
+                                                    fontSize: '14px',
+                                                    fontWeight: '500',
+                                                    textDecoration: 'none'
+                                                }}
                                             >
-                                                🚪 Cerrar Sesión
+                                                Cerrar Sesión
                                             </Link>
                                         </div>
                                     )}
@@ -134,7 +262,20 @@ export default function Navbar({ sticky = true, className = '' }) {
                     {/* Mobile Menu Button */}
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        className="md:hidden p-2 rounded hover:bg-gray-100 transition-colors"
+                        style={{
+                            display: 'none',
+                            '@media (max-width: 768px)': {
+                                display: 'block'
+                            },
+                            padding: '8px',
+                            borderRadius: '6px',
+                            border: 'none',
+                            background: 'transparent',
+                            cursor: 'pointer',
+                            color: 'var(--gris-texto)',
+                            transition: 'all 0.3s ease'
+                        }}
+                        className="mobile-menu-btn"
                         aria-label="Toggle menu"
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -150,25 +291,64 @@ export default function Navbar({ sticky = true, className = '' }) {
 
                 {/* Mobile Navigation */}
                 {mobileMenuOpen && (
-                    <div className="md:hidden pb-4 space-y-2 border-t border-gray-200 pt-4">
+                    <div style={{
+                        paddingBottom: '16px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                        borderTop: '1px solid var(--gris-oscuro)',
+                        paddingTop: '16px'
+                    }}>
                         <Link
                             href={route('home')}
-                            className="block px-4 py-2 text-gray-700 hover:bg-blue-50 rounded transition-colors font-semibold"
+                            className="vz-mobile-link"
+                            style={{
+                                display: 'block',
+                                paddingLeft: '16px',
+                                paddingRight: '16px',
+                                paddingTop: '10px',
+                                paddingBottom: '10px',
+                                color: 'var(--gris-texto)',
+                                borderRadius: '6px',
+                                transition: 'all 0.3s ease',
+                                textDecoration: 'none',
+                                fontSize: '14px',
+                                fontWeight: '500'
+                            }}
                         >
-                            🏠 Inicio
+                            Inicio
                         </Link>
 
                         {!auth?.user ? (
                             <>
                                 <Link
                                     href={route('plans.index')}
-                                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 rounded transition-colors font-semibold"
+                                    className="vz-mobile-link"
+                                    style={{
+                                        display: 'block',
+                                        paddingLeft: '16px',
+                                        paddingRight: '16px',
+                                        paddingTop: '10px',
+                                        paddingBottom: '10px',
+                                        color: 'var(--gris-texto)',
+                                        borderRadius: '6px',
+                                        transition: 'all 0.3s ease',
+                                        textDecoration: 'none',
+                                        fontSize: '14px',
+                                        fontWeight: '500'
+                                    }}
                                 >
-                                    📦 Planes
+                                    Planes
                                 </Link>
                                 <Link
                                     href={route('login')}
-                                    className="block px-4 py-2 bg-blue-600 text-white font-bold rounded transition-colors text-center"
+                                    className="vz-btn-signin"
+                                    style={{ 
+                                        textDecoration: 'none',
+                                        textAlign: 'center',
+                                        width: '100%',
+                                        display: 'block'
+                                    }}
                                 >
                                     Ingresar
                                 </Link>
@@ -177,55 +357,196 @@ export default function Navbar({ sticky = true, className = '' }) {
                             <>
                                 <Link
                                     href={route('dashboard')}
-                                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 rounded transition-colors font-semibold"
+                                    className="vz-mobile-link"
+                                    style={{
+                                        display: 'block',
+                                        paddingLeft: '16px',
+                                        paddingRight: '16px',
+                                        paddingTop: '10px',
+                                        paddingBottom: '10px',
+                                        color: 'var(--gris-texto)',
+                                        borderRadius: '6px',
+                                        transition: 'all 0.3s ease',
+                                        textDecoration: 'none',
+                                        fontSize: '14px',
+                                        fontWeight: '500'
+                                    }}
                                 >
-                                    📊 Mi Panel
+                                    Mi Panel
                                 </Link>
 
                                 {isAgente && (
                                     <Link
                                         href={route('properties.create')}
-                                        className="block px-4 py-2 text-gray-700 hover:bg-blue-50 rounded transition-colors font-semibold"
+                                        className="vz-mobile-link"
+                                        style={{
+                                            display: 'block',
+                                            paddingLeft: '16px',
+                                            paddingRight: '16px',
+                                            paddingTop: '10px',
+                                            paddingBottom: '10px',
+                                            color: 'var(--gris-texto)',
+                                            borderRadius: '6px',
+                                            transition: 'all 0.3s ease',
+                                            textDecoration: 'none',
+                                            fontSize: '14px',
+                                            fontWeight: '500'
+                                        }}
                                     >
-                                        📝 Publicar Propiedad
+                                        Publicar Propiedad
                                     </Link>
                                 )}
 
                                 {isAdmin && (
                                     <Link
                                         href={route('admin.dashboard')}
-                                        className="block px-4 py-2 text-red-600 hover:bg-red-50 rounded transition-colors font-semibold"
+                                        className="vz-mobile-link-admin"
+                                        style={{
+                                            display: 'block',
+                                            paddingLeft: '16px',
+                                            paddingRight: '16px',
+                                            paddingTop: '10px',
+                                            paddingBottom: '10px',
+                                            color: '#ff6b6b',
+                                            borderRadius: '6px',
+                                            transition: 'all 0.3s ease',
+                                            textDecoration: 'none',
+                                            fontSize: '14px',
+                                            fontWeight: '500'
+                                        }}
                                     >
-                                        🔐 Administración
+                                        Administración
                                     </Link>
                                 )}
 
                                 <Link
                                     href={route('payment.index')}
-                                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 rounded transition-colors font-semibold"
+                                    className="vz-mobile-link"
+                                    style={{
+                                        display: 'block',
+                                        paddingLeft: '16px',
+                                        paddingRight: '16px',
+                                        paddingTop: '10px',
+                                        paddingBottom: '10px',
+                                        color: 'var(--gris-texto)',
+                                        borderRadius: '6px',
+                                        transition: 'all 0.3s ease',
+                                        textDecoration: 'none',
+                                        fontSize: '14px',
+                                        fontWeight: '500'
+                                    }}
                                 >
-                                    💳 Mi Suscripción
+                                    Mi Suscripción
                                 </Link>
                                 <Link
                                     href={route('profile.edit')}
-                                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 rounded transition-colors font-semibold"
+                                    className="vz-mobile-link"
+                                    style={{
+                                        display: 'block',
+                                        paddingLeft: '16px',
+                                        paddingRight: '16px',
+                                        paddingTop: '10px',
+                                        paddingBottom: '10px',
+                                        color: 'var(--gris-texto)',
+                                        borderRadius: '6px',
+                                        transition: 'all 0.3s ease',
+                                        textDecoration: 'none',
+                                        fontSize: '14px',
+                                        fontWeight: '500'
+                                    }}
                                 >
-                                    ⚙️ Configuración
+                                    Configuración
                                 </Link>
-                                <hr className="my-2" />
+                                <hr style={{
+                                    margin: '8px 0',
+                                    borderColor: 'var(--gris-oscuro)',
+                                    backgroundColor: 'var(--gris-oscuro)'
+                                }} />
                                 <Link
                                     href={route('logout')}
                                     method="post"
                                     as="button"
-                                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded transition-colors font-semibold"
+                                    className="vz-mobile-link-danger"
+                                    style={{
+                                        textAlign: 'left',
+                                        paddingLeft: '16px',
+                                        paddingRight: '16px',
+                                        paddingTop: '10px',
+                                        paddingBottom: '10px',
+                                        color: '#ff6b6b',
+                                        borderRadius: '6px',
+                                        transition: 'all 0.3s ease',
+                                        fontSize: '14px',
+                                        fontWeight: '500',
+                                        border: 'none',
+                                        background: 'none',
+                                        cursor: 'pointer',
+                                        textDecoration: 'none'
+                                    }}
                                 >
-                                    🚪 Cerrar Sesión
+                                    Cerrar Sesión
                                 </Link>
                             </>
                         )}
                     </div>
                 )}
             </div>
+
+            <style>{`
+                @media (min-width: 768px) {
+                    .desktop-nav {
+                        display: flex !important;
+                    }
+                    .mobile-menu-btn {
+                        display: none !important;
+                    }
+                }
+
+                @media (max-width: 767px) {
+                    .desktop-nav {
+                        display: none !important;
+                    }
+                    .mobile-menu-btn {
+                        display: block !important;
+                    }
+                }
+
+                .vz-nav-link:hover {
+                    color: var(--oro-claro) !important;
+                }
+
+                .vz-menu-item:hover {
+                    background-color: var(--verde-salvia) !important;
+                    color: white !important;
+                }
+
+                .vz-menu-item-danger:hover {
+                    background-color: rgba(255, 107, 107, 0.1) !important;
+                }
+
+                .vz-mobile-link:hover {
+                    background-color: var(--verde-salvia) !important;
+                    color: white !important;
+                }
+
+                .vz-mobile-link-admin:hover {
+                    background-color: rgba(255, 107, 107, 0.1) !important;
+                }
+
+                .mobile-menu-btn:hover {
+                    background-color: var(--gris-oscuro) !important;
+                }
+
+                .hidden {
+                    display: none;
+                }
+
+                @media (min-width: 640px) {
+                    .sm\:inline {
+                        display: inline;
+                    }
+                }
+            `}</style>
         </nav>
     );
 }

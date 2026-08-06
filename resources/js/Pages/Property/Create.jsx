@@ -91,7 +91,7 @@ export default function PropertyCreate({ locations = [], subscription }) {
                             Has alcanzado el límite de propiedades para tu plan actual.
                         </p>
                         <p className="text-gray-600 mb-8">
-                            Plan: <strong>{subscription.plan_name}</strong> ({subscription.properties_available} propiedades)
+                            Plan: <strong>{subscription.plan}</strong> ({subscription.properties_left} propiedades disponibles)
                         </p>
                         <Link
                             href={route('plans.index')}
