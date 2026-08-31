@@ -21,7 +21,11 @@ export default function PropertyCard({
 }) {
     const [imageError, setImageError] = useState(false);
 
-    const imageUrl = property.primary_image?.url || property.images?.[0]?.url || '/placeholder.png';
+    const imageUrl = property.primary_image?.url 
+    || property.primaryImage?.url 
+    || property.images?.[0]?.url 
+    || property.images?.[0]?.image_url
+    || '/placeholder.png';
     const transactionType = property.transaction_type || property.type;
 
     const handleDelete = () => {
