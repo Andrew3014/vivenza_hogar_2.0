@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Subscription;
+use App\Models\PropertyImage;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
@@ -101,6 +102,9 @@ class DatabaseSeeder extends Seeder
 
         // Ejecutar seeder de propiedades
         $this->call(PropertySeeder::class);
+
+        // Ejecutar seeder completo de Cochabamba (datos reales para testing)
+        $this->call(CochabambaTestSeeder::class);
 
         // Escenario pequeño y repetible para pruebas de los tres roles,
         // operaciones Bolivia y mapa interactivo.

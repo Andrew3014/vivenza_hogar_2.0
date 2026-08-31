@@ -2472,6 +2472,137 @@ body {
     display:block;
 }
 
+/* =========================
+   COLORES POR CATEGORÍA - VIVENZA
+   ========================= */
+
+/* VENTA - Azul/Teal profesional (confianza, estabilidad) */
+.vz-cat-venta {
+    --cat-color: #3db5c9;
+    --cat-color-dark: #2a7f8e;
+    --cat-bg: rgba(61, 181, 201, 0.08);
+    --cat-border: rgba(61, 181, 201, 0.25);
+}
+.vz-cat-venta .vz-category-icon {
+    color: var(--cat-color);
+    background: var(--cat-bg);
+    border-color: var(--cat-border);
+}
+.vz-cat-venta:hover {
+    --cat-hover-glow: rgba(61, 181, 201, 0.18);
+}
+.vz-cat-venta.vz-cat-active {
+    background: linear-gradient(180deg, rgba(42, 65, 70, 0.96), rgba(26, 45, 50, 0.98));
+    border-color: var(--cat-color);
+    box-shadow: 0 22px 42px var(--cat-hover-glow), inset 0 1px 0 rgba(61, 181, 201, 0.15);
+}
+.vz-cat-venta.vz-cat-active .vz-category-icon {
+    background: var(--cat-color);
+    color: var(--negro-profundo);
+    border-color: var(--cat-color);
+}
+.vz-cat-venta.vz-cat-active h3 {
+    color: var(--cat-color);
+}
+
+/* ALQUILER - Verde natural (hogar, crecimiento) */
+.vz-cat-alquiler {
+    --cat-color: #4ade80;
+    --cat-color-dark: #2d7d46;
+    --cat-bg: rgba(74, 222, 128, 0.08);
+    --cat-border: rgba(74, 222, 128, 0.25);
+}
+.vz-cat-alquiler .vz-category-icon {
+    color: var(--cat-color);
+    background: var(--cat-bg);
+    border-color: var(--cat-border);
+}
+.vz-cat-alquiler:hover {
+    --cat-hover-glow: rgba(74, 222, 128, 0.18);
+}
+.vz-cat-alquiler.vz-cat-active {
+    background: linear-gradient(180deg, rgba(45, 65, 50, 0.96), rgba(26, 45, 30, 0.98));
+    border-color: var(--cat-color);
+    box-shadow: 0 22px 42px var(--cat-hover-glow), inset 0 1px 0 rgba(74, 222, 128, 0.15);
+}
+.vz-cat-alquiler.vz-cat-active .vz-category-icon {
+    background: var(--cat-color);
+    color: var(--negro-profundo);
+    border-color: var(--cat-color);
+}
+.vz-cat-alquiler.vz-cat-active h3 {
+    color: var(--cat-color);
+}
+
+/* ALQUILER DIARIO - Naranja/Ámbar cálido (vacaciones, corto plazo) */
+.vz-cat-diario {
+    --cat-color: #fbbf24;
+    --cat-color-dark: #c46210;
+    --cat-bg: rgba(251, 191, 36, 0.08);
+    --cat-border: rgba(251, 191, 36, 0.25);
+}
+.vz-cat-diario .vz-category-icon {
+    color: var(--cat-color);
+    background: var(--cat-bg);
+    border-color: var(--cat-border);
+}
+.vz-cat-diario:hover {
+    --cat-hover-glow: rgba(251, 191, 36, 0.18);
+}
+.vz-cat-diario.vz-cat-active {
+    background: linear-gradient(180deg, rgba(70, 55, 20, 0.96), rgba(50, 35, 10, 0.98));
+    border-color: var(--cat-color);
+    box-shadow: 0 22px 42px var(--cat-hover-glow), inset 0 1px 0 rgba(251, 191, 36, 0.15);
+}
+.vz-cat-diario.vz-cat-active .vz-category-icon {
+    background: var(--cat-color);
+    color: var(--negro-profundo);
+    border-color: var(--cat-color);
+}
+.vz-cat-diario.vz-cat-active h3 {
+    color: var(--cat-color);
+}
+
+/* ANTICRÉTICO - Púrpura/Índigo profundo (legal, contratos serios, largo plazo) */
+.vz-cat-anticretico {
+    --cat-color: #a855f7;
+    --cat-color-dark: #5b3a8c;
+    --cat-bg: rgba(168, 85, 247, 0.08);
+    --cat-border: rgba(168, 85, 247, 0.25);
+}
+.vz-cat-anticretico .vz-category-icon {
+    color: var(--cat-color);
+    background: var(--cat-bg);
+    border-color: var(--cat-border);
+}
+.vz-cat-anticretico:hover {
+    --cat-hover-glow: rgba(168, 85, 247, 0.18);
+}
+.vz-cat-anticretico.vz-cat-active {
+    background: linear-gradient(180deg, rgba(55, 35, 70, 0.96), rgba(35, 20, 45, 0.98));
+    border-color: var(--cat-color);
+    box-shadow: 0 22px 42px var(--cat-hover-glow), inset 0 1px 0 rgba(168, 85, 247, 0.15);
+}
+.vz-cat-anticretico.vz-cat-active .vz-category-icon {
+    background: var(--cat-color);
+    color: var(--negro-profundo);
+    border-color: var(--cat-color);
+}
+.vz-cat-anticretico.vz-cat-active h3 {
+    color: var(--cat-color);
+}
+
+/* Animación suave para el estado activo */
+.vz-category-card.vz-cat-active {
+    transform: translateY(-4px);
+    animation: vz-cat-pulse 2s ease-in-out infinite;
+}
+
+@keyframes vz-cat-pulse {
+    0%, 100% { box-shadow: 0 22px 42px var(--cat-hover-glow), inset 0 1px 0 rgba(255,255,255,0.05); }
+    50% { box-shadow: 0 24px 48px var(--cat-hover-glow), inset 0 1px 0 rgba(255,255,255,0.08); }
+}
+
 .vz-hero-title {
     display:flex;
     align-items:center;

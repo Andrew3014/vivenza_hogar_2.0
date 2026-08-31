@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 
 import AppLayout from '@/Layouts/AppLayout';
@@ -103,9 +103,12 @@ export default function Home({ properties = [], filters = {} }) {
               next_page_url: properties?.next_page_url,
           };
 
+    // Categoría activa desde la URL (para resaltar la tarjeta seleccionada)
+    const activeCategory = useMemo(() => filters.transaction_type || filters.type || '', [filters]);
+
     // Estado inicial sincronizado con los filtros que ya aplicó el servidor.
     const [filtersState, setFiltersState] = useState({
-        type: filters.transaction_type || filters.type || '',
+        type: activeCategory,
         minPrice: filters.min_price || '',
         maxPrice: filters.max_price || '',
         bedrooms: filters.bedrooms || '',
@@ -181,7 +184,7 @@ export default function Home({ properties = [], filters = {} }) {
                         <div className="vz-category-grid">
                             <Link
                                 href={route('properties.index', { transaction_type: 'venta' })}
-                                className="vz-category-card"
+                                className={`vz-category-card vz-cat-venta ${activeCategory === 'venta' ? 'vz-cat-active' : ''}`}
                             >
                                 <div className="vz-category-icon"><HouseIcon className="vz-category-svg" /></div>
                                 <h3>Venta</h3>
@@ -190,7 +193,7 @@ export default function Home({ properties = [], filters = {} }) {
 
                             <Link
                                 href={route('properties.index', { transaction_type: 'alquiler' })}
-                                className="vz-category-card"
+                                className={`vz-category-card vz-cat-alquiler ${activeCategory === 'alquiler' ? 'vz-cat-active' : ''}`}
                             >
                                 <div className="vz-category-icon"><KeyIcon className="vz-category-svg" /></div>
                                 <h3>Alquiler</h3>
@@ -199,7 +202,7 @@ export default function Home({ properties = [], filters = {} }) {
 
                             <Link
                                 href={route('properties.index', { transaction_type: 'alquiler_diario' })}
-                                className="vz-category-card"
+                                className={`vz-category-card vz-cat-diario ${activeCategory === 'alquiler_diario' ? 'vz-cat-active' : ''}`}
                             >
                                 <div className="vz-category-icon"><CalendarIcon className="vz-category-svg" /></div>
                                 <h3>Alquiler por días</h3>
@@ -208,7 +211,7 @@ export default function Home({ properties = [], filters = {} }) {
 
                             <Link
                                 href={route('properties.index', { transaction_type: 'anticretico' })}
-                                className="vz-category-card"
+                                className={`vz-category-card vz-cat-anticretico ${activeCategory === 'anticretico' ? 'vz-cat-active' : ''}`}
                             >
                                 <div className="vz-category-icon"><DocumentIcon className="vz-category-svg" /></div>
                                 <h3>Anticrético</h3>
