@@ -3,6 +3,7 @@ import { Link, router, usePage } from '@inertiajs/react';
 
 import AppLayout from '@/Layouts/AppLayout';
 import PropertyMap from '@/Components/Map/PropertyMap';
+import PropertyCard from '@/Components/PropertyCard';
 import FlashMessages from '@/Components/FlashMessages';
 import { formatCurrency, transactionTypeLabel } from '@/utils';
 
@@ -46,34 +47,6 @@ function SearchIcon({ className = '' }) {
         <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
             <circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.8"/>
             <path d="m16 16 4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-        </svg>
-    );
-}
-
-function BedIcon({ className = '' }) {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-            <path d="M4 12h16v6H4zm2-5h7a2 2 0 0 1 2 2v3H6V7Z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M4 18v2M20 18v2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
-        </svg>
-    );
-}
-
-function BathIcon({ className = '' }) {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-            <path d="M7 11h10a4 4 0 0 1 4 4v1H3v-1a4 4 0 0 1 4-4Z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M9 11V8.8A2.8 2.8 0 0 1 11.8 6h.4A2.8 2.8 0 0 1 15 8.8V11" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M7 18h10" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
-        </svg>
-    );
-}
-
-function RulerIcon({ className = '' }) {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-            <path d="M5 17.5V7.5A1.5 1.5 0 0 1 6.5 6h11A1.5 1.5 0 0 1 19 7.5v10a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 17.5Z" fill="none" stroke="currentColor" strokeWidth="1.7"/>
-            <path d="M8 9h8M8 12h8M8 15h6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
         </svg>
     );
 }
@@ -427,75 +400,11 @@ export default function Home({ properties = [], filters = {} }) {
 
                                 <div className="vz-property-grid">
                                     {propertyList.map((property) => (
-                                        <div key={property.id} className="vz-card">
-                                            <div className="vz-property-image">
-                                                {property.primary_image?.url || property.images?.[0]?.url ? (
-                                                    <img
-                                                        src={property.primary_image?.url || property.images?.[0]?.url}
-                                                        alt={property.title}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="vz-property-placeholder">
-                                                        <HouseIcon className="vz-property-placeholder-icon" />
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            <div className="vz-card-body">
-                                                <p className="text-gray-500 text-sm mb-2">
-                                                    {property.location?.city || 'Ubicación no disponible'}
-                                                </p>
-
-                                                <h3 className="font-bold text-xl mb-3">{property.title}</h3>
-
-                                                <div className="flex gap-4 text-sm mb-4 vz-property-stats">
-                                                    {property.bedrooms && (
-                                                        <span className="vz-stat-item">
-                                                            <BedIcon className="vz-stat-icon" />
-                                                            <span>{property.bedrooms} Hab.</span>
-                                                        </span>
-                                                    )}
-                                                    {property.bathrooms && (
-                                                        <span className="vz-stat-item">
-                                                            <BathIcon className="vz-stat-icon" />
-                                                            <span>{property.bathrooms} Baños</span>
-                                                        </span>
-                                                    )}
-                                                    {property.area && (
-                                                        <span className="vz-stat-item">
-                                                            <RulerIcon className="vz-stat-icon" />
-                                                            <span>{property.area} m²</span>
-                                                        </span>
-                                                    )}
-                                                </div>
-
-                                                <div className="flex justify-between items-center">
-                                                    <div>
-                                                        <strong className="text-xl">
-                                                            {formatCurrency(property.price, property.currency)}
-                                                        </strong>
-                                                        {property.transaction_type === 'alquiler' && (
-                                                            <span className="text-xs text-gray-500"> /mes</span>
-                                                        )}
-                                                        {property.transaction_type === 'alquiler_diario' && (
-                                                            <span className="text-xs text-gray-500"> /día</span>
-                                                        )}
-                                                    </div>
-
-                                                    <Link
-                                                        href={route('properties.show', property.id)}
-                                                        className="vz-property-link"
-                                                    >
-                                                        Ver
-                                                    </Link>
-                                                </div>
-
-                                                <p className="mt-3 text-xs text-gray-600">
-                                                    {transactionTypeLabel(property.transaction_type)}
-                                                </p>
-                                            </div>
-                                        </div>
+                                        <PropertyCard
+                                            key={property.id}
+                                            property={property}
+                                            variant="grid"
+                                        />
                                     ))}
                                 </div>
 
