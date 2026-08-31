@@ -28,6 +28,7 @@ class PropertyController extends Controller
             'user',
             'user.activeSubscription',
             'primaryImage',
+            'images',
         ])
         ->leftJoinSub($subscriptionPriority, 'subscription_priority', function ($join) {
             $join->on('properties.user_id', '=', 'subscription_priority.user_id');
