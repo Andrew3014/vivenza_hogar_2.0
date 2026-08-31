@@ -152,15 +152,49 @@ export default function PropertyMap({ properties = [] }) {
                     const marker = L.marker([lat, lng], {
                         icon: buildMarkerIcon(L, property),
                         title: property.title,
+                        riseOnHover: true,
+                        riseOffset: 250,
                     }).addTo(mapInstanceRef.current);
 
                     marker.bindPopup(buildPopupContent(property), {
                         minWidth: 220,
                         maxWidth: 260,
+                        closeButton: false,
+                        autoClose: false,
+                        closeOnClick: false,
+                        className: 'vz-map-custom-popup',
                     });
 
+                    // Mostrar popup al hacer hover
+                    marker.on('mouseover', (e) => {
+                        e.target.openPopup();
+                    });
+
+                    marker.on('mouseout', (e) => {
+                        // No cerrar si el mouse está sobre el popup
+                        setTimeout(() => {
+                            if (mapInstanceRef.current && !mapInstanceRef.current._popupHandlersAdded) {
+                                const popup = document.querySelector('.leaflet-popup-content-wrapper');
+                                if (popup && !popup.matches(':hover')) {
+                                    e.target.closePopup();
+                                }
+                            }
+                        }, 100);
+                    });
+
+                    // Click en el marcador navega a la propiedad
                     marker.on('click', () => {
                         router.visit(`/properties/${property.id}`);
+                    });
+
+                    // Click en el enlace del popup navega
+                    marker.on('popupopen', () => {
+                        const link = document.querySelector('.leaflet-popup-content .vz-map-popup-link');
+                        if (!link) return;
+                        link.addEventListener('click', (ev) => {
+                            ev.preventDefault();
+                            router.visit(link.getAttribute('href'));
+                        });
                     });
 
                     bounds.push([lat, lng]);

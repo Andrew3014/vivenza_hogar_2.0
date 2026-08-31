@@ -1131,28 +1131,52 @@ body {
 
 .vz-property-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 28px;
-    margin-top: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+
+/* Responsive breakpoints para la grilla de propiedades */
+@media (max-width: 1024px) {
+    .vz-property-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .vz-property-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .vz-property-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
 }
 
 .vz-property-card {
     background: rgba(42, 42, 42, 0.5);
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid var(--gris-oscuro);
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
 }
 
 .vz-property-card:hover {
-    transform: translateY(-12px);
+    transform: translateY(-8px);
     border-color: var(--oro-claro);
     box-shadow: 0 20px 40px rgba(201, 169, 97, 0.15);
 }
 
 .vz-property-image {
-    height: 240px;
+    height: 220px;
     background: linear-gradient(135deg, var(--gris-oscuro), var(--gris-medio));
     display: flex;
     align-items: center;
@@ -1170,36 +1194,49 @@ body {
 }
 
 .vz-property-card:hover .vz-property-image img {
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 .vz-property-info {
     padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .vz-property-location {
     font-family: var(--serif-elegante);
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 600;
     color: var(--blanco-crema);
-    margin: 0 0 12px 0;
+    margin: 0 0 10px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .vz-property-specs {
     color: var(--gris-muy-claro);
-    font-size: 13px;
-    margin-bottom: 10px;
+    font-size: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .vz-property-specs span {
-    margin-right: 16px;
+    background: rgba(201, 169, 97, 0.1);
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    white-space: nowrap;
 }
 
 .vz-property-price {
     color: var(--oro-claro);
     font-weight: 700;
-    font-size: 18px;
-    margin-top: 12px;
+    font-size: 17px;
+    margin-top: 10px;
 }
 
 /* =========================
@@ -2460,6 +2497,11 @@ body {
     border-radius: 16px;
     background: rgba(201, 169, 97, 0.06);
     border: 1px solid rgba(201, 169, 97, 0.14);
+    transition: all 0.3s ease;
+}
+
+.vz-category-card:hover .vz-category-icon {
+    transform: scale(1.1);
 }
 
 .vz-category-svg,
@@ -2467,9 +2509,10 @@ body {
 .vz-inline-icon,
 .vz-stat-icon,
 .vz-property-placeholder-icon {
-    width:1.1em;
-    height:1.1em;
-    display:block;
+    width: 1.5em;
+    height: 1.5em;
+    display: block;
+    stroke-width: 1.8;
 }
 
 /* =========================
@@ -3426,16 +3469,55 @@ body {
 .leaflet-popup-content-wrapper {
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    padding: 0;
 }
 
 .leaflet-popup-content {
     margin: 0;
+    width: auto !important;
+}
+
+.vz-map-custom-popup .leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+.vz-map-custom-popup .leaflet-popup-tip {
+    background: white;
+}
+
+.vz-map-custom-popup .leaflet-popup-content {
+    margin: 0;
+    padding: 0;
 }
 
 .vz-map-popup {
     padding: 14px 16px;
-    min-width: 200px;
+    min-width: 220px;
+    max-width: 260px;
     color: #1f2937;
+    background: white;
+    border-radius: 12px;
+}
+
+/* Asegurar que el popup no se cierre al hacer hover sobre él */
+.leaflet-popup-content-wrapper:hover ~ .leaflet-popup-tip,
+.leaflet-popup-content-wrapper:hover {
+    /* Mantener visible */
+}
+
+/* Fix para z-index del popup */
+.leaflet-popup {
+    z-index: 1000 !important;
+}
+
+/* Mejorar visibilidad de los iconos en la leyenda del mapa */
+.vz-map-legend-icon {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: middle;
+    stroke-width: 2;
 }
 
 .vz-map-popup-badges {
@@ -3556,6 +3638,159 @@ body {
     width: 13px;
     height: 13px;
     color: var(--blanco-crema);
+}
+
+/* Páginas autenticadas con fondo claro usan texto oscuro
+   (agregado en el contenedor raíz de cada página clara) */
+
+/* =========================
+   UTILIDADES RESPONSIVE Y TRUNCADO DE TEXTO
+========================= */
+
+/* Truncado de texto */
+.vz-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vz-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.vz-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Responsive spacing */
+.vz-space-y-responsive > * + * {
+    margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+    .vz-space-y-responsive > * + * {
+        margin-top: 1.5rem;
+    }
+}
+
+/* Grid responsive utilities */
+.vz-grid-auto-fit {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+@media (max-width: 768px) {
+    .vz-grid-auto-fit {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+/* Card responsive padding */
+.vz-card-responsive {
+    padding: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .vz-card-responsive {
+        padding: 1rem;
+    }
+}
+
+/* Text responsive sizing */
+.vz-text-responsive {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+.vz-title-responsive {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.vz-heading-responsive {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* Mejorar iconos del mapa en la leyenda */
+.vz-map-legend-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--blanco-crema);
+    flex-shrink: 0;
+    stroke-width: 2;
+}
+
+/* Mejorar visibilidad de iconos en filtros del mapa */
+.vz-map-filter-icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+    color: var(--oro-principal);
+}
+
+/* Asegurar que los contenedores no se desborden */
+.vz-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .vz-container {
+        padding: 0 1rem;
+    }
+}
+
+/* Flex responsive */
+.vz-flex-responsive {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .vz-flex-responsive {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
+
+/* Prevenir overflow horizontal */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+/* Focus visible para accesibilidad */
+*:focus-visible {
+    outline: 2px solid var(--oro-principal);
+    outline-offset: 2px;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--negro-profundo);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gris-oscuro);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gris-medio);
 }
 
 /* Páginas autenticadas con fondo claro usan texto oscuro

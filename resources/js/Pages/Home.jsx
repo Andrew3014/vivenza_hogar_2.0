@@ -291,102 +291,122 @@ export default function Home({ properties = [], filters = {} }) {
 
                 {/* ================= CONTENIDO ================= */}
                 <section className="vz-container py-10">
-                    <div className="grid lg:grid-cols-4 gap-8">
+                    <div className="vz-flex-responsive lg:flex-row gap-8">
                         {/* ================= SIDEBAR ================= */}
-                        <aside>
-                            <div className="vz-sidebar">
-                                <h3 className="font-bold text-xl mb-5">Filtros</h3>
+                        <aside className="lg:w-72 flex-shrink-0">
+                            <div className="vz-sidebar vz-card-responsive sticky top-24">
+                                <div className="flex items-center justify-between mb-5">
+                                    <h3 className="font-bold text-xl">Filtros</h3>
+                                    <button
+                                        onClick={() => setExpandedFilters(!expandedFilters)}
+                                        className="lg:hidden text-sm text-amber-600 hover:text-amber-500 font-bold"
+                                    >
+                                        {expandedFilters ? 'Ocultar' : 'Más'} opciones
+                                    </button>
+                                </div>
 
-                                <label>Precio mínimo</label>
-                                <input
-                                    type="number"
-                                    name="minPrice"
-                                    value={filtersState.minPrice}
-                                    onChange={handleFilterChange}
-                                    className="vz-input mb-3"
-                                />
-
-                                <label>Precio máximo</label>
-                                <input
-                                    type="number"
-                                    name="maxPrice"
-                                    value={filtersState.maxPrice}
-                                    onChange={handleFilterChange}
-                                    className="vz-input mb-4"
-                                />
-
-                                <h4 className="font-bold mt-5 mb-2">Tipo</h4>
-                                <select
-                                    name="type"
-                                    value={filtersState.type}
-                                    onChange={handleFilterChange}
-                                    className="vz-input"
-                                >
-                                    <option value="">Todos</option>
-                                    <option value="venta">Venta</option>
-                                    <option value="alquiler">Alquiler</option>
-                                    <option value="anticretico">Anticrético</option>
-                                    <option value="alquiler_diario">Alquiler por días</option>
-                                </select>
-
-                                <button
-                                    onClick={() => setExpandedFilters(!expandedFilters)}
-                                    className="mt-5 font-bold"
-                                >
-                                    Más opciones ▼
-                                </button>
-
-                                {expandedFilters && (
-                                    <div className="mt-4 space-y-3">
-                                        <label>Área mínima (m²)</label>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Precio mínimo</label>
                                         <input
                                             type="number"
-                                            name="minArea"
-                                            value={filtersState.minArea}
+                                            name="minPrice"
+                                            value={filtersState.minPrice}
                                             onChange={handleFilterChange}
-                                            className="vz-input"
+                                            className="vz-input w-full"
+                                            placeholder="Ej: 50000"
                                         />
-
-                                        <label>Área máxima (m²)</label>
-                                        <input
-                                            type="number"
-                                            name="maxArea"
-                                            value={filtersState.maxArea}
-                                            onChange={handleFilterChange}
-                                            className="vz-input"
-                                        />
-
-                                        <label className="flex items-center gap-2">
-                                            <input
-                                                type="checkbox"
-                                                name="featured"
-                                                checked={filtersState.featured}
-                                                onChange={handleFilterChange}
-                                                className="w-4 h-4"
-                                            />
-                                            Solo destacadas
-                                        </label>
                                     </div>
-                                )}
 
-                                <button
-                                    onClick={applyServerFilters}
-                                    className="vz-btn-success w-full mt-5"
-                                >
-                                    Aplicar filtros
-                                </button>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Precio máximo</label>
+                                        <input
+                                            type="number"
+                                            name="maxPrice"
+                                            value={filtersState.maxPrice}
+                                            onChange={handleFilterChange}
+                                            className="vz-input w-full"
+                                            placeholder="Ej: 500000"
+                                        />
+                                    </div>
 
-                                <button
-                                    onClick={clearFilters}
-                                    className="w-full mt-3 bg-gray-300 p-3 rounded"
-                                >
-                                    Limpiar
-                                </button>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo</label>
+                                        <select
+                                            name="type"
+                                            value={filtersState.type}
+                                            onChange={handleFilterChange}
+                                            className="vz-input w-full"
+                                        >
+                                            <option value="">Todos</option>
+                                            <option value="venta">🏠 Venta</option>
+                                            <option value="alquiler">🔑 Alquiler</option>
+                                            <option value="anticretico">📄 Anticrético</option>
+                                            <option value="alquiler_diario">📅 Alquiler por días</option>
+                                        </select>
+                                    </div>
+
+                                    {expandedFilters && (
+                                        <div className="space-y-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Área mínima (m²)</label>
+                                                <input
+                                                    type="number"
+                                                    name="minArea"
+                                                    value={filtersState.minArea}
+                                                    onChange={handleFilterChange}
+                                                    className="vz-input w-full"
+                                                    placeholder="Ej: 50"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Área máxima (m²)</label>
+                                                <input
+                                                    type="number"
+                                                    name="maxArea"
+                                                    value={filtersState.maxArea}
+                                                    onChange={handleFilterChange}
+                                                    className="vz-input w-full"
+                                                    placeholder="Ej: 500"
+                                                />
+                                            </div>
+
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    name="featured"
+                                                    checked={filtersState.featured}
+                                                    onChange={handleFilterChange}
+                                                    className="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500"
+                                                />
+                                                <span className="text-sm text-gray-700 dark:text-gray-300">Solo destacadas</span>
+                                            </label>
+                                        </div>
+                                    )}
+
+                                    <button
+                                        onClick={applyServerFilters}
+                                        className="vz-btn-success w-full mt-4"
+                                    >
+                                        <span className="vz-inline-icon-group">
+                                            <SearchIcon className="vz-inline-icon" />
+                                            <span>Aplicar filtros</span>
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        onClick={clearFilters}
+                                        className="w-full mt-2 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                                    >
+                                        Limpiar filtros
+                                    </button>
+                                </div>
                             </div>
                         </aside>
 
                         {/* ================= LISTADO ================= */}
-                        <main className="lg:col-span-3">
+                        <main className="flex-1 min-w-0">
                             <h2 className="text-3xl font-bold mb-6">Propiedades disponibles</h2>
 
                             {propertyList.length > 0 && (
