@@ -3793,5 +3793,754 @@ html, body {
     background: var(--gris-medio);
 }
 
+/* =========================
+   FIXES: CONTRASTE, RESPONSIVIDAD, ACCESIBILIDAD
+   ========================= */
+
+/* =========================
+   FIX: CONTRASTE EN FORMULARIOS Y SIDEBAR
+   ========================= */
+
+/* Labels siempre legibles */
+.vz-form-label,
+.vz-auth-label,
+.vz-sidebar h3,
+.vz-sidebar-option,
+.vz-form-label,
+label {
+    color: var(--blanco-crema) !important;
+    font-weight: 600;
+}
+
+/* Inputs con contraste adecuado */
+.vz-form-input,
+.vz-auth-input,
+.vz-input,
+.vz-select,
+.vz-form-input-modal,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+textarea,
+select {
+    background: var(--negro-oscuro) !important;
+    color: var(--blanco-crema) !important;
+    border: 1px solid var(--gris-oscuro) !important;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.vz-form-input::placeholder,
+.vz-auth-input::placeholder,
+.vz-input::placeholder {
+    color: var(--gris-claro) !important;
+    opacity: 1;
+}
+
+.vz-form-input:focus,
+.vz-auth-input:focus,
+.vz-input:focus,
+.vz-select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none !important;
+    border-color: var(--oro-principal) !important;
+    box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.25) !important;
+    background: var(--negro-oscuro) !important;
+}
+
+.vz-form-input::placeholder,
+.vz-auth-input::placeholder,
+.vz-input::placeholder {
+    color: var(--gris-claro) !important;
+}
+
+/* Labels siempre visibles */
+label,
+.vz-form-label,
+.vz-auth-label {
+    color: var(--blanco-crema) !important;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Botones con contraste */
+.vz-primary-btn,
+.vz-btn-primary,
+.vz-btn-primary,
+button[type="submit"],
+button.vz-btn-primary {
+    background: linear-gradient(135deg, var(--oro-claro), var(--oro-principal)) !important;
+    color: var(--negro-profundo) !important;
+    font-weight: 800;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(201, 169, 97, 0.3);
+}
+
+.vz-primary-btn:hover,
+.vz-btn-primary:hover,
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(201, 169, 97, 0.4) !important;
+}
+
+/* Botones secundarios */
+.vz-btn-secondary,
+.vz-btn-secondary {
+    background: transparent !important;
+    color: var(--oro-principal) !important;
+    border: 2px solid var(--oro-principal) !important;
+    color: var(--oro-principal) !important;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.vz-btn-secondary:hover {
+    background: var(--oro-principal) !important;
+    color: var(--negro-profundo) !important;
+}
+
+/* Sidebar - textos legibles */
+.vz-sidebar,
+.vz-sidebar-admin,
+.vz-sidebar h3,
+.vz-sidebar-option,
+.vz-form-label,
+.vz-sidebar-admin a,
+.vz-sidebar-admin a:hover {
+    color: var(--blanco-crema) !important;
+}
+
+.vz-sidebar h3 {
+    color: var(--oro-principal) !important;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.vz-sidebar-option,
+.vz-sidebar-admin a {
+    color: var(--gris-claro) !important;
+    transition: color 0.2s ease;
+}
+
+.vz-sidebar-option:hover,
+.vz-sidebar-admin a:hover {
+    color: var(--oro-claro) !important;
+}
+
+/* Cards - texto siempre legible */
+.vz-property-card,
+.vz-property-card *,
+.vz-card,
+.vz-card * {
+    color: var(--blanco-crema);
+}
+
+.vz-property-title,
+.vz-property-title *,
+h3.vz-property-title,
+.vz-property-location {
+    color: var(--blanco-crema) !important;
+    font-weight: 600;
+}
+
+.vz-property-price,
+.vz-property-price * {
+    color: var(--oro-claro) !important;
+    font-weight: 700;
+}
+
+.vz-property-specs span {
+    background: rgba(201, 169, 97, 0.15) !important;
+    color: var(--oro-principal) !important;
+    border: 1px solid rgba(201, 169, 97, 0.2);
+}
+
+/* Tablas y listas legibles */
+table,
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--gris-oscuro);
+    color: var(--blanco-crema);
+}
+
+th {
+    background: var(--negro-oscuro);
+    color: var(--oro-principal);
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+tr:hover td {
+    background: rgba(201, 169, 97, 0.05);
+}
+
+/* Formularios en general */
+.form-group,
+.field-group {
+    margin-bottom: 1.5rem;
+}
+
+.field-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--blanco-crema);
+}
+
+.field-input,
+.field-select,
+.field-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--gris-oscuro);
+    background: var(--negro-oscuro);
+    color: var(--blanco-crema);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.field-input:focus,
+.field-select:focus,
+.field-textarea:focus {
+    outline: none;
+    border-color: var(--oro-principal);
+    box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.25);
+}
+
+/* Botones de acción */
+.btn-danger,
+.btn-delete {
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    color: white !important;
+}
+
+.btn-danger:hover,
+.btn-delete:hover {
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4) !important;
+}
+
+/* =========================
+   RESPONSIVIDAD MEJORADA
+   ========================= */
+
+/* Contenedor principal responsivo */
+.vz-container,
+.container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+    .vz-container,
+    .container {
+        padding: 0 1rem;
+    }
+}
+
+/* Grid responsivo para property cards */
+.vz-property-grid,
+.vz-grid-auto-fit,
+.properties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .vz-property-grid,
+    .vz-grid-auto-fit,
+    .properties-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .vz-property-grid,
+    .vz-grid-auto-fit,
+    .properties-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .vz-property-grid,
+    .vz-grid-auto-fit,
+    .properties-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+}
+
+/* Layout responsivo para dashboard/admin */
+.vz-dashboard,
+.vz-admin-layout,
+.dashboard-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .vz-dashboard,
+    .vz-admin-layout,
+    .dashboard-layout {
+        flex-direction: row;
+    }
+}
+
+/* Sidebar colapsable en móvil */
+.vz-sidebar,
+.vz-sidebar-admin {
+    width: 100%;
+    max-width: 280px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 1023px) {
+    .vz-sidebar,
+    .vz-sidebar-admin {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 280px;
+        max-width: 85vw;
+        height: calc(100vh - 70px);
+        z-index: 100;
+        background: var(--negro-oscuro);
+        border-right: 1px solid var(--gris-oscuro);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        transition: left 0.3s ease;
+        overflow-y: auto;
+    }
+    
+    .vz-sidebar.open,
+    .vz-sidebar-admin.open {
+        left: 0;
+    }
+    
+    .vz-sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 99;
+    }
+    
+    .vz-sidebar-overlay.open {
+        display: block;
+    }
+}
+
+@media (min-width: 1024px) {
+    .vz-sidebar,
+    .vz-sidebar-admin {
+        position: sticky;
+        top: 0;
+        height: calc(100vh - 70px);
+        overflow-y: auto;
+    }
+}
+
+/* Tablas responsivas */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table {
+    min-width: 600px;
+}
+
+/* Formularios responsivos */
+@media (max-width: 640px) {
+    .vz-form-grid,
+    .form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+    
+    .vz-form-actions,
+    .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .vz-form-actions button,
+    .form-actions button {
+        width: 100%;
+    }
+}
+
+/* Cards responsivas */
+.vz-property-card,
+.property-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.vz-property-image {
+    height: 200px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+    .vz-property-image {
+        height: 180px;
+    }
+}
+
+.vz-property-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+/* Texto truncado responsivo */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Texto responsivo */
+.text-responsive {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+.title-responsive {
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+}
+
+.heading-responsive {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* Espaciado responsivo */
+.space-y-responsive > * + * {
+    margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+    .space-y-responsive > * + * {
+        margin-top: 1.5rem;
+    }
+}
+
+/* Utilidades de visibilidad */
+@media (max-width: 767px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .hide-desktop {
+        display: none !important;
+    }
+}
+
+/* Sidebar móvil */
+.mobile-menu-btn {
+    display: none;
+}
+
+@media (max-width: 1023px) {
+    .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        background: var(--negro-oscuro);
+        border: 1px solid var(--gris-oscuro);
+        color: var(--blanco-crema);
+    }
+}
+
+/* Verificaciones page - responsive */
+.vz-verifications-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .vz-verifications-layout {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+/* Admin actions bar responsive */
+.admin-actions-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .admin-actions-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .admin-actions-bar > div {
+        width: 100%;
+    }
+    
+    .admin-actions-bar button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Verificaciones list responsive */
+.verifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.verification-item {
+    padding: 1rem;
+    border-bottom: 1px solid var(--gris-oscuro);
+    transition: background 0.2s ease;
+}
+
+.verification-item:hover {
+    background: rgba(201, 169, 97, 0.03);
+}
+
+@media (max-width: 640px) {
+    .verification-item {
+        padding: 0.75rem;
+    }
+    
+    .verification-item-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .verification-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+    
+    .verification-actions button {
+        flex: 1;
+    }
+}
+
+/* Verification detail panel responsive */
+.verification-detail-panel {
+    position: sticky;
+    top: 2rem;
+}
+
+@media (max-width: 1023px) {
+    .verification-detail-panel {
+        position: static;
+        margin-top: 1.5rem;
+    }
+}
+
+/* Admin dashboard stats grid */
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+}
+
+.admin-stat-card {
+    padding: 1.25rem;
+    background: rgba(42, 42, 42, 0.8);
+    border: 1px solid var(--gris-oscuro);
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.admin-stat-value {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 800;
+    color: var(--oro-principal);
+    line-height: 1.2;
+}
+
+.admin-stat-label {
+    color: var(--gris-claro);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Botones responsive */
+.btn-responsive {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+    .btn-responsive {
+        padding: 0.875rem 1rem;
+        font-size: 0.8125rem;
+        width: 100%;
+    }
+}
+
+/* Modal responsive */
+.modal-responsive {
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@media (max-width: 640px) {
+    .modal-responsive {
+        max-width: 95vw;
+        margin: 1rem;
+        border-radius: 12px;
+    }
+}
+
+/* Badge y etiquetas responsivas */
+.badge-responsive {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+    .badge-responsive {
+        font-size: 0.6875rem;
+        padding: 0.1875rem 0.5rem;
+    }
+}
+
+/* Prevenir overflow horizontal global */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+/* Focus visible para accesibilidad */
+*:focus-visible {
+    outline: 2px solid var(--oro-principal) !important;
+    outline-offset: 2px !important;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--negro-profundo);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gris-oscuro);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gris-medio);
+}
+
+/* =========================
+   ANIMACIONES
+   ========================= */
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.15s ease-out forwards;
+}
+
 /* Páginas autenticadas con fondo claro usan texto oscuro
    (agregado en el contenedor raíz de cada página clara) */

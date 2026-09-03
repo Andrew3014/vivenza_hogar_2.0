@@ -29,6 +29,33 @@ export default function AgentVerifications({ verifications = [] }) {
         { label: 'Rechazadas', value: verifications.filter(v => v.status === 'rechazado').length, color: 'bg-red-50', icon: '❌' },
     ];
 
+    const handleDownload = () => {
+        if (!isAdmin) return;
+        setDownloading(true);
+        router.get(route('admin.download.verified'), {}, {
+            onSuccess: () => setDownloading(false),
+            onError: () => setDownloading(false),
+        });
+    };
+
+    const handlePurgeConfirm = () => {
+        if (!isAdmin) return;
+        setPurgeConfirm(true);
+    };
+
+    const handlePurge = () => {
+        if (!isAdmin) return;
+        setPurging(true);
+        router.post(route('admin.purge.verified'), { confirm: true }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setPurging(false);
+                setPurgeConfirm(false);
+            },
+            onError: () => setPurging(false),
+        });
+    };
+
     const handleApprove = (id) => {
         setProcessing(true);
         router.post(route(approveRoute, id), {}, {
@@ -77,6 +104,70 @@ export default function AgentVerifications({ verifications = [] }) {
             <Head title="Verificaciones de Identidad - Vivenza" />
 
             <FlashMessages />
+
+            {/* Admin Actions Bar */}
+            {isAdmin && (
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 mb-6 border border-blue-100">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <h3 className="font-bold text-indigo-800">📦 Herramientas de Administración</h3>
+                            <p className="text-sm text-indigo-700 mt-1">Descargar datos verificados y purgar archivos físicos</p>
+                        </div>
+                        <div className="flex gap-3 flex-wrap">
+                            <button
+                                onClick={handleDownload}
+                                disabled={downloading}
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-60 flex items-center gap-2"
+                            >
+                                {downloading ? '⏳ Descargando...' : '📥 Descargar Verificados'}
+                            </button>
+                            <button
+                                onClick={handlePurgeConfirm}
+                                disabled={purging}
+                                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-60 flex items-center gap-2"
+                            >
+                                {purging ? '⏳ Purgando...' : '🗑️ Purgar Archivos'}
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {purgeConfirm && (
+                        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <p className="text-red-800 font-medium mb-2">⚠️ Confirmar purga de archivos físicos</p>
+                            <p className="text-sm text-red-700 mb-3">
+                                Esto eliminará TODOS los archivos físicos (imágenes de propiedades, documentos KYC) 
+                                de usuarios verificados. Solo se mantendrán los datos en la base de datos.
+                                <strong>Esta acción es irreversible.</strong>
+                            </p>
+                            <label className="flex items-center gap-2 mt-3 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={purgeConfirm}
+                                    onChange={(e) => setPurgeConfirm(e.target.checked)}
+                                    className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                                    required
+                                />
+                                <span className="text-sm text-red-800">Confirmo que quiero eliminar permanentemente los archivos físicos</span>
+                            </label>
+                            <div className="flex gap-3 mt-4">
+                                <button
+                                    onClick={handlePurge}
+                                    disabled={purging}
+                                    className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-60"
+                                >
+                                    {purging ? '⏳ Purgando...' : '🗑️ Confirmar Purga'}
+                                </button>
+                                <button
+                                    onClick={() => setPurgeConfirm(false)}
+                                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded"
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Estadísticas */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">

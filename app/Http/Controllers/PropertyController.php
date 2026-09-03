@@ -6,6 +6,7 @@ use App\Models\Property;
 use App\Models\Location;
 use App\Models\Subscription;
 use App\Support\PropertyTransactionTypes;
+use App\Services\ImageCompressionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -14,6 +15,13 @@ use Inertia\Response;
 
 class PropertyController extends Controller
 {
+    protected ImageCompressionService $imageCompressionService;
+
+    public function __construct(ImageCompressionService $imageCompressionService)
+    {
+        $this->imageCompressionService = $imageCompressionService;
+    }
+
     public function index(Request $request): Response
     {
         $transactionType = $request->input('transaction_type', $request->input('type'));
@@ -348,6 +356,7 @@ class PropertyController extends Controller
 
     /**
      * Guardar las imágenes subidas en la publicación (máx. 8 por anuncio).
+     * Comprime y convierte a WebP 85% calidad.
      */
     private function storeImages(Request $request, Property $property): void
     {
@@ -355,10 +364,15 @@ class PropertyController extends Controller
         $slots = max(0, 8 - $property->images()->count());
 
         foreach (array_slice($images, 0, $slots) as $image) {
-            $path = $image->store('properties/' . $property->id, 'public');
+            $compressedPath = $this->imageCompressionService->compressAndConvertToWebP(
+                $image,
+                'properties/' . $property->id,
+                1920,
+                85
+            );
 
             $property->images()->create([
-                'image_url' => Storage::disk('public')->url($path),
+                'image_url' => Storage::disk('public')->url($compressedPath),
                 'alt_text' => $property->title,
             ]);
         }
@@ -367,6 +381,7 @@ class PropertyController extends Controller
     /**
      * Eliminar imágenes marcadas (borra el archivo y el registro) y
      * agregar las nuevas, siempre dentro del límite de 8 por anuncio.
+     * Comprime y convierte a WebP 85% calidad.
      */
     private function updateImages(Request $request, Property $property): void
     {

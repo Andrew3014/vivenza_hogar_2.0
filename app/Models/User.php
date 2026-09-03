@@ -122,15 +122,28 @@ class User extends Authenticatable
         return $this->role === Roles::CLIENT;
     }
 
-    /** Clientes/vendedores y agentes pueden publicar propiedades. */
+    /** Solo clientes pueden publicar propiedades (con plan activo). */
     public function canPublishProperties(): bool
     {
-        return in_array($this->role, Roles::publishers(), true);
+        return in_array($this->role, Roles::publishers(), true) && $this->hasActiveSubscription();
     }
 
+    /** Staff de la empresa: admin y agentes. */
     public function isStaff(): bool
     {
-        return $this->isAdmin() || $this->isAgent();
+        return in_array($this->role, Roles::staff(), true);
+    }
+
+    /** Acceso a panel de administración. */
+    public function canAccessAdmin(): bool
+    {
+        return in_array($this->role, Roles::adminAccess(), true);
+    }
+
+    /** Acceso a panel de agente. */
+    public function canAccessAgent(): bool
+    {
+        return in_array($this->role, Roles::agentAccess(), true);
     }
 
     public function subscriptionPriority(): int

@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Property;
+use App\Models\PropertyImage;
 use App\Models\UserVerification;
 use App\Models\Subscription;
 use App\Support\Roles;
 use App\Support\PropertyTransactionTypes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\ZipArchive;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -213,5 +216,180 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'Estado de publicación actualizado.');
+    }
+
+    /**
+     * Descargar datos verificados de usuarios con propiedades aprobadas.
+     * Genera un ZIP organizado por carpeta: {carnet_number}_{full_name}/
+     */
+    public function downloadVerifiedData(Request $request)
+    {
+        $verifiedUsers = User::whereHas('verification', function ($query) {
+            $query->where('status', 'aprobado');
+        })
+        ->with(['verification', 'properties' => function ($query) {
+            $query->where('status', 'aprobado')->with('images');
+        }])
+        ->get();
+
+        $zip = new ZipArchive();
+        $filename = 'verified_data_' . date('Y-m-d_H-i-s') . '.zip';
+        $tempPath = storage_path('app/temp/' . $filename);
+
+        if (!Storage::disk('local')->exists('temp')) {
+            Storage::disk('local')->makeDirectory('temp');
+        }
+
+        if (!$zip->open($tempPath, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+            return back()->with('error', 'No se pudo crear el archivo ZIP.');
+        }
+
+        foreach ($verifiedUsers as $user) {
+            $folderName = $this->sanitizeFolderName(
+                ($user->document_number ?? 'sin_ci') . '_' . Str::slug($user->name)
+            );
+
+            // Datos del usuario y verificación
+            $userData = [
+                'user' => $user->only(['id', 'name', 'email', 'phone', 'document_number', 'document_extension', 'city', 'state']),
+                'verification' => $user->verification?->only([
+                    'document_front_url', 'document_back_url', 'face_photo_url', 'status', 'verified_at'
+                ]),
+                'properties' => [],
+            ];
+
+            foreach ($user->properties as $property) {
+                $propertyData = $property->only([
+                    'id', 'title', 'description', 'price', 'transaction_type', 'currency',
+                    'status', 'bedrooms', 'bathrooms', 'area', 'latitude', 'longitude',
+                    'parking_spaces', 'furnished', 'amenities', 'created_at'
+                ]);
+                $propertyData['images'] = $property->images->map(function ($img) {
+                    return [
+                        'url' => $img->url,
+                        'alt_text' => $img->alt_text,
+                    ];
+                })->toArray();
+
+                $userData['properties'][] = $propertyData;
+            }
+
+            // JSON con todos los datos
+            $zip->addFromString("{$folderName}/data.json", json_encode($userData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+            // Imágenes de propiedades
+            foreach ($user->properties as $property) {
+                $propertyFolder = "{$folderName}/properties/property_{$property->id}";
+
+                foreach ($property->images as $image) {
+                    $relativePath = str_replace('/storage/', '', $image->url);
+                    if (Storage::disk('public')->exists($relativePath)) {
+                        $ext = pathinfo($image->url, PATHINFO_EXTENSION) ?: 'webp';
+                        $zip->addFile(
+                            Storage::disk('public')->path($relativePath),
+                            "{$propertyFolder}/image_{$image->id}.{$ext}"
+                        );
+                    }
+                }
+            }
+
+            // Documentos de verificación
+            if ($user->verification) {
+                $verificationFolder = "{$folderName}/verification";
+
+                foreach (['document_front_url', 'document_back_url', 'face_photo_url'] as $field) {
+                    if ($user->verification->$field) {
+                        $relativePath = str_replace('/storage/', '', $user->verification->$field);
+                        if (Storage::disk('public')->exists($relativePath)) {
+                            $ext = pathinfo($user->verification->$field, PATHINFO_EXTENSION) ?: 'jpg';
+                            $zip->addFile(
+                                Storage::disk('public')->path($relativePath),
+                                "{$verificationFolder}/{$field}.{$ext}"
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        $zip->close();
+
+        return response()->download($tempPath)->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Purgar archivos físicos de usuarios verificados (después de descargar respaldo).
+     * Mantiene solo datos esenciales en BD.
+     */
+    public function purgeVerifiedFiles(Request $request)
+    {
+        $request->validate([
+            'confirm' => ['required', 'accepted'],
+        ]);
+
+        $verifiedUsers = User::whereHas('verification', function ($query) {
+            $query->where('status', 'aprobado');
+        })->with('properties.images', 'verification')->get();
+
+        $purgedCount = 0;
+        $freedSpace = 0;
+
+        foreach ($verifiedUsers as $user) {
+            // Eliminar imágenes de propiedades
+            foreach ($user->properties as $property) {
+                foreach ($property->images as $image) {
+                    $relativePath = str_replace('/storage/', '', $image->url);
+                    if (Storage::disk('public')->exists($relativePath)) {
+                        $freedSpace += Storage::disk('public')->size($relativePath);
+                        Storage::disk('public')->delete($relativePath);
+                        $purgedCount++;
+                    }
+                    $image->delete();
+                }
+
+                // Marcar propiedad como purgada
+                $property->update(['images_purged_at' => now(), 'images_purged_by' => auth()->id()]);
+            }
+
+            // Eliminar documentos de verificación
+            if ($user->verification) {
+                foreach (['document_front_url', 'document_back_url', 'face_photo_url'] as $field) {
+                    if ($user->verification->$field) {
+                        $relativePath = str_replace('/storage/', '', $user->verification->$field);
+                        if (Storage::disk('public')->exists($relativePath)) {
+                            $freedSpace += Storage::disk('public')->size($relativePath);
+                            Storage::disk('public')->delete($relativePath);
+                            $purgedCount++;
+                        }
+                    }
+                    $user->verification->update([
+                        'files_purged_at' => now(),
+                        'files_purged_by' => auth()->id(),
+                    ]);
+                }
+            }
+        }
+
+        return back()->with('success', "Purga completada. {$purgedCount} archivos eliminados. Espacio liberado: " . $this->formatBytes($freedSpace));
+    }
+
+    private function sanitizeFolderName(string $name): string
+    {
+        // Reemplazar caracteres no válidos para nombres de carpeta
+        $name = preg_replace('/[^\p{L}\p{N}_-]/u', '_', $name);
+        $name = preg_replace('/_{2,}/', '_', $name);
+        return trim($name, '_');
+    }
+
+    private function formatBytes(int $bytes): string
+    {
+        if ($bytes >= 1073741824) {
+            return number_format($bytes / 1073741824, 2) . ' GB';
+        } elseif ($bytes >= 1048576) {
+            return number_format($bytes / 1048576, 2) . ' MB';
+        } elseif ($bytes >= 1024) {
+            return number_format($bytes / 1024, 2) . ' KB';
+        }
+        return $bytes . ' bytes';
     }
 }

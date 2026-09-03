@@ -116,6 +116,10 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/suscripciones', [AdminController::class, 'subscriptions'])->name('subscriptions');
     Route::get('/reportes', [AdminController::class, 'reports'])->name('reports');
     Route::get('/configuracion', [AdminController::class, 'settings'])->name('settings');
+
+    // Descargar datos verificados y purga
+    Route::get('/descargar-verificados', [AdminController::class, 'downloadVerifiedData'])->name('download.verified');
+    Route::post('/purgar-verificados', [AdminController::class, 'purgeVerifiedFiles'])->name('purge.verified');
 });
 
 
